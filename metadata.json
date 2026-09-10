@@ -1,0 +1,6 @@
+{
+  "name": "Mi Feria",
+  "description": "Sistema POS futurista y PWA offline para ferias escolares y de emprendimiento, con control de ROI en tiempo real, actas oficiales y landing de ventas.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

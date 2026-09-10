@@ -1,0 +1,27 @@
+{
+  "id": "/",
+  "name": "Mi Feria - Control ROI y POS",
+  "short_name": "Mi Feria",
+  "description": "Sistema POS ultra-rápido y balance financiero en vivo para ferias escolares y proyectos de emprendimiento.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#050505",
+  "theme_color": "#06b6d4",
+  "categories": ["business", "finance", "productivity"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

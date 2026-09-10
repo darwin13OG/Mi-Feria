@@ -1,0 +1,161 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* POS App Dynamic Light & Dark Mode Overrides */
+html:not(.dark) .pos-theme-screen {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+html:not(.dark) .pos-theme-shell {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+}
+
+html:not(.dark) .pos-theme-header {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+html:not(.dark) .pos-theme-tabs {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+}
+
+html:not(.dark) .pos-theme-card {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+  box-shadow: 0 1px 4px 0 rgba(15, 23, 42, 0.08) !important;
+}
+
+html:not(.dark) .pos-theme-card-subtle {
+  background-color: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+html:not(.dark) .pos-theme-text-title {
+  color: #0f172a !important;
+}
+
+html:not(.dark) .pos-theme-text-muted {
+  color: #334155 !important;
+}
+
+html:not(.dark) .pos-theme-input {
+  background-color: #ffffff !important;
+  border-color: #94a3b8 !important;
+  color: #0f172a !important;
+}
+
+/* Light mode high-contrast text and border overrides */
+html:not(.dark) .pos-theme-shell .text-gray-400,
+html:not(.dark) .pos-theme-shell .text-slate-400 {
+  color: #475569 !important;
+}
+
+html:not(.dark) .pos-theme-shell .text-gray-500,
+html:not(.dark) .pos-theme-shell .text-slate-500 {
+  color: #334155 !important;
+}
+
+html:not(.dark) .pos-theme-shell .text-gray-300,
+html:not(.dark) .pos-theme-shell .text-slate-300 {
+  color: #1e293b !important;
+}
+
+html:not(.dark) .pos-theme-shell .text-white {
+  color: #0f172a !important;
+}
+
+html:not(.dark) .pos-theme-shell .bg-black\/60,
+html:not(.dark) .pos-theme-shell .bg-black\/50,
+html:not(.dark) .pos-theme-shell .bg-black\/70,
+html:not(.dark) .pos-theme-shell .bg-black\/40 {
+  background-color: #f1f5f9 !important;
+}
+
+html:not(.dark) .pos-theme-shell .border-white\/10,
+html:not(.dark) .pos-theme-shell .border-white\/5,
+html:not(.dark) .pos-theme-shell .border-white\/15,
+html:not(.dark) .pos-theme-shell .border-white\/20,
+html:not(.dark) .pos-theme-shell .border-\[\#1f1f23\] {
+  border-color: #cbd5e1 !important;
+}
+
+html:not(.dark) .pos-theme-shell button.bg-cyan-500,
+html:not(.dark) .pos-theme-shell .bg-cyan-500.text-black {
+  color: #000000 !important;
+}
+
+@layer utilities {
+  /* Print Optimization for Official Certificate / Acta de Cierre */
+  @media print {
+    body {
+      background: #ffffff !important;
+      color: #0f172a !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    .no-print {
+      display: none !important;
+    }
+    .print-only {
+      display: block !important;
+    }
+    .page-break {
+      page-break-after: always;
+    }
+  }
+}
+
+/* Smooth fade-in and scale animations */
+@keyframes fadeInSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-slide {
+  animation: fadeInSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.25);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(6, 182, 212, 0.5);
+}
+
+/* Number input spinner hide */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
