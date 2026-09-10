@@ -1,9 +1,16 @@
-const CACHE_NAME = 'miferia-cache-v1';
+const CACHE_NAME = 'miferia-cache-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/icon.svg'
+  '/icon.svg',
+  '/banner-miferia.png',
+  '/logo-premium.png',
+  '/logo-standard.png',
+  '/pwa-192x192.png',
+  '/pwa-512x512.png',
+  '/pwa-maskable-512x512.png',
+  '/apple-touch-icon.png'
 ];
 
 self.addEventListener('install', (event) => {

@@ -6,6 +6,7 @@ import { LicenseGeneratorModal } from './components/LicenseGeneratorModal';
 import { WhatsAppSupport } from './components/WhatsAppSupport';
 import { PlanType, StandConfig } from './types';
 import { loadStoredState, saveStoredState } from './lib/storage';
+import { playSuccess } from './lib/audio';
 import { WifiOff } from 'lucide-react';
 
 export default function App() {
@@ -13,6 +14,27 @@ export default function App() {
   const [licenseModalOpen, setLicenseModalOpen] = useState(false);
   const [licenseModalPlan, setLicenseModalPlan] = useState<PlanType>('premium');
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  // Synchronize dynamic PWA and favicon icons with the active plan
+  useEffect(() => {
+    try {
+      const stored = loadStoredState();
+      const currentPlan: PlanType = stored.config.plan || 'standard';
+      const iconUrl = currentPlan === 'premium' ? '/logo-premium.png' : '/logo-standard.png';
+
+      const appleIcon = document.querySelector<HTMLLinkElement>("link[rel='apple-touch-icon']");
+      if (appleIcon) {
+        appleIcon.href = iconUrl;
+      }
+
+      const iconLink = document.querySelector<HTMLLinkElement>("link[rel~='icon']");
+      if (iconLink) {
+        iconLink.href = iconUrl;
+      }
+    } catch {
+      // ignore
+    }
+  }, [currentView]);
 
   // Network monitor for offline feedback
   useEffect(() => {
@@ -28,7 +50,7 @@ export default function App() {
     };
   }, []);
 
-  // Detect Automatic Payment Return Query Parameters
+  // Detect Automatic Payment Return Query Parameters, recognize plan and sanitize URL immediately
   useEffect(() => {
     try {
       const urlParams = new URLSearchParams(window.location.search);
@@ -36,13 +58,32 @@ export default function App() {
         urlParams.get('status') === 'approved' ||
         urlParams.get('pago') === 'exitoso' ||
         urlParams.get('approved') === 'true' ||
+        urlParams.get('estado') === 'aprobado' ||
         urlParams.has('id'); // Wompi callback params
 
+      const rawPlan = urlParams.get('plan');
       const storedPlan = (localStorage.getItem('feria_plan') || 'premium') as PlanType;
-      const requestedPlan = (urlParams.get('plan') as PlanType) || storedPlan;
+      const detectedPlan: PlanType =
+        rawPlan === 'standard' || rawPlan === 'estandar'
+          ? 'standard'
+          : rawPlan === 'premium'
+          ? 'premium'
+          : storedPlan;
 
       if (isPaymentApproved) {
-        setLicenseModalPlan(requestedPlan === 'standard' ? 'standard' : 'premium');
+        // 1. Immediately clean URL parameters to prevent copy-paste / sharing tampering
+        try {
+          const cleanUrl = window.location.origin + window.location.pathname;
+          window.history.replaceState({}, document.title, cleanUrl);
+        } catch {
+          // ignore
+        }
+
+        // 2. Play celebration sound
+        playSuccess();
+
+        // 3. Open license modal with detected plan
+        setLicenseModalPlan(detectedPlan);
         setLicenseModalOpen(true);
       }
     } catch {
@@ -154,8 +195,8 @@ export default function App() {
         onActivate={handleActivationComplete}
       />
 
-      {/* Pulsing Floating WhatsApp Support Button */}
-      <WhatsAppSupport />
+      {/* Pulsing Floating WhatsApp Support Button (Solo en el portal informativo/landing, no dentro de la app) */}
+      {currentView === 'landing' && <WhatsAppSupport />}
     </main>
   );
 }

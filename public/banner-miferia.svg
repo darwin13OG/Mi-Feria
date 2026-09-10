@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 220" width="620" height="220">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14"/>
+      <stop offset="100%" stop-color="#04060a"/>
+    </linearGradient>
+    <linearGradient id="peakLeft" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0077b6"/>
+      <stop offset="100%" stop-color="#00b4d8"/>
+    </linearGradient>
+    <linearGradient id="peakMid" x1="0%" y1="100%" x2="50%" y2="0%">
+      <stop offset="0%" stop-color="#023e8a"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
+    </linearGradient>
+    <linearGradient id="peakRight" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0096c7"/>
+      <stop offset="100%" stop-color="#0077b6"/>
+    </linearGradient>
+    <filter id="glowGreen" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+  <!-- Main rounded card container -->
+  <rect x="4" y="4" width="612" height="212" rx="24" fill="url(#bgGrad)" stroke="#162032" stroke-width="2"/>
+  
+  <!-- Left Side: Mountain Peaks & Chart -->
+  <g transform="translate(55, 38)">
+    <!-- Mountain Peaks -->
+    <polygon points="0,105 38,28 75,105" fill="url(#peakLeft)" />
+    <polygon points="45,105 82,14 120,105" fill="url(#peakMid)" />
+    <polygon points="95,105 125,32 155,105" fill="url(#peakRight)" />
+    
+    <!-- Chart Pill at bottom -->
+    <rect x="-10" y="90" width="175" height="52" rx="16" fill="#070d18" stroke="#17253d" stroke-width="2"/>
+    
+    <!-- Chart Line -->
+    <path d="M 12,122 L 48,106 L 82,120 L 126,86" fill="none" stroke="#10b981" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" filter="url(#glowGreen)" />
+    
+    <!-- Chart Nodes -->
+    <circle cx="12" cy="122" r="5.5" fill="#10b981"/>
+    <circle cx="48" cy="106" r="5.5" fill="#34d399"/>
+    <circle cx="82" cy="120" r="5.5" fill="#38bdf8"/>
+    <circle cx="126" cy="86" r="7" fill="#10b981" stroke="#ffffff" stroke-width="3"/>
+  </g>
+
+  <!-- Vertical Divider -->
+  <line x1="270" y1="35" x2="270" y2="185" stroke="#1b273b" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Right Side: MiFeria Wordmark -->
+  <g transform="translate(315, 142)">
+    <text font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="74" font-weight="900" letter-spacing="-1.5">
+      <tspan fill="#ffffff">Mi</tspan><tspan fill="#0099ff">Feria</tspan>
+    </text>
+  </g>
+</svg>

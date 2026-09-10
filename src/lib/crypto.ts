@@ -92,8 +92,7 @@ export async function verifyLicenseKey(
     return true;
   }
 
-  // Check numerical formula from user's system:
-  // (id * 5) + 7 for premium, (id * 3) + 7 for standard
+  // Strict check: ONLY match the requested plan key
   const numericId = calculateNumericStandId(ownerName || standId);
   const expectedNumKey = generateNumericKey(numericId, plan);
   if (parseInt(cleanKey, 10) === expectedNumKey) {
@@ -108,21 +107,13 @@ export async function verifyLicenseKey(
     }
   }
 
-  // Check the other plan in case user bought premium or standard
-  const otherPlan: PlanType = plan === 'premium' ? 'standard' : 'premium';
-  const otherNumKey = generateNumericKey(numericId, otherPlan);
-  if (parseInt(cleanKey, 10) === otherNumKey) {
-    return true;
-  }
-
-  // Also support legacy formula if already issued
+  // Support legacy formula for THIS plan only
   const legacyKey = getLegacyNumericKey(numericId, plan);
-  const otherLegacyKey = getLegacyNumericKey(numericId, otherPlan);
-  if (parseInt(cleanKey, 10) === legacyKey || parseInt(cleanKey, 10) === otherLegacyKey) {
+  if (parseInt(cleanKey, 10) === legacyKey) {
     return true;
   }
 
-  // Also verify SHA-256 hash format if present
+  // Verify SHA-256 hash format if present (plan-specific prefix)
   const normalizedStand = standId.trim().toUpperCase();
   const normalizedOwner = ownerName.trim().toLowerCase();
   const rawPayload = `${normalizedStand}::${normalizedOwner}::${plan}::${PRIVATE_SALT}`;
@@ -136,4 +127,24 @@ export async function verifyLicenseKey(
   }
 
   return false;
+}
+
+// Helper to detect if user entered the other plan's key by mistake
+export function detectMismatchedPlanKey(
+  inputKey: string,
+  standId: string,
+  ownerName: string,
+  currentPlan: PlanType
+): PlanType | null {
+  if (!inputKey) return null;
+  const cleanKey = inputKey.trim().toUpperCase();
+  const numericId = calculateNumericStandId(ownerName || standId);
+  const otherPlan: PlanType = currentPlan === 'premium' ? 'standard' : 'premium';
+  const otherNumKey = generateNumericKey(numericId, otherPlan);
+
+  if (parseInt(cleanKey, 10) === otherNumKey) {
+    return otherPlan;
+  }
+
+  return null;
 }

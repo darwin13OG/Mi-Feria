@@ -22,6 +22,8 @@ import {
   Layers,
   Printer,
   Download,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 import { AppState, PlanType, Product, SaleSnapshot, Expense, StandConfig } from '../types';
 import {
@@ -33,9 +35,11 @@ import {
   generateStandardReportText,
 } from '../lib/storage';
 import { formatCOP, formatNumberMask, parseMaskedNumber } from '../lib/crypto';
+import { playBeep, playCashRegister, playSuccess, playWarning, isAudioMuted, setAudioMuted } from '../lib/audio';
 import { ChangeCalculatorModal } from './pos/ChangeCalculatorModal';
 import { UpgradeModal } from './pos/UpgradeModal';
 import { ThemeToggle } from './ThemeToggle';
+import { InstallAppButton } from './InstallAppButton';
 import confetti from 'canvas-confetti';
 
 interface POSAppProps {
@@ -57,6 +61,51 @@ export const POSApp: React.FC<POSAppProps> = ({ onBackToLanding, onOpenLicenseMo
   const [copiedShare, setCopiedShare] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
+
+  // Audio and Demo Setup State
+  const [soundMuted, setSoundMuted] = useState<boolean>(() => isAudioMuted());
+  const [showClearDemoModal, setShowClearDemoModal] = useState(false);
+  const [setupStandName, setSetupStandName] = useState(state.config.projectName || '');
+  const [setupInvestmentStr, setSetupInvestmentStr] = useState(
+    state.config.initialInvestment ? formatNumberMask(state.config.initialInvestment) : ''
+  );
+
+  const toggleAudio = () => {
+    const next = !soundMuted;
+    setSoundMuted(next);
+    setAudioMuted(next);
+    if (!next) {
+      playBeep();
+    }
+  };
+
+  const handleClearDemoAndStartReal = () => {
+    const inv = parseMaskedNumber(configInvStr);
+    const updatedName = configStand.trim() || 'Mi Stand';
+
+    setState((prev) => {
+      const updated: AppState = {
+        ...prev,
+        sales: [],
+        expenses: [],
+        config: {
+          ...prev.config,
+          projectName: updatedName,
+          initialInvestment: inv,
+          isConfigured: true,
+        },
+      };
+      saveStoredState(updated);
+      return updated;
+    });
+
+    playSuccess();
+    confetti({ particleCount: 60, spread: 75, origin: { y: 0.6 } });
+    setShowClearDemoModal(false);
+    setActiveTab('ventas');
+    setLastSaleFeedback('✨ ¡Stand configurado! Ventas de prueba eliminadas y caja en $0.');
+    setTimeout(() => setLastSaleFeedback(null), 3000);
+  };
 
   const handleUpgradeSuccess = () => {
     setState((prev) => {
@@ -122,6 +171,7 @@ export const POSApp: React.FC<POSAppProps> = ({ onBackToLanding, onOpenLicenseMo
     const remaining = Math.max(0, product.initialStock - soldSoFar);
 
     if (remaining <= 0) {
+      playWarning();
       setLastSaleFeedback(`¡Alerta! ${product.name} agotado.`);
       setTimeout(() => setLastSaleFeedback(null), 2500);
       return;
@@ -145,6 +195,7 @@ export const POSApp: React.FC<POSAppProps> = ({ onBackToLanding, onOpenLicenseMo
       sales: [newSale, ...prev.sales],
     }));
 
+    playCashRegister();
     setCalcAmount(subtotal);
     setLastSaleFeedback(`+ ${formatCOP(subtotal)} (${qtyToSell}x ${product.name})`);
     setTimeout(() => setLastSaleFeedback(null), 2000);
@@ -159,6 +210,7 @@ export const POSApp: React.FC<POSAppProps> = ({ onBackToLanding, onOpenLicenseMo
       ...prev,
       sales: prev.sales.slice(1),
     }));
+    playWarning();
     setLastSaleFeedback(`↩ Anulado: ${last.c}x ${last.n}`);
     setTimeout(() => setLastSaleFeedback(null), 2500);
   };
@@ -277,34 +329,87 @@ export const POSApp: React.FC<POSAppProps> = ({ onBackToLanding, onOpenLicenseMo
       <div className="w-full sm:max-w-[460px] min-h-screen sm:min-h-[94vh] flex flex-col pos-theme-shell bg-[#050505] sm:rounded-[36px] sm:border sm:border-[#1f1f23] sm:shadow-2xl overflow-hidden relative transition-colors">
         {/* COMPACT APP HEADER */}
         <header className="p-3 border-b border-[#1f1f23] pos-theme-header bg-[#0c0c0e]/95 backdrop-blur-md sticky top-0 z-20 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
+            {/* Dynamic Plan Logo: Gold for Premium, Blue for Standard */}
+            <img
+              src={isPremium ? '/logo-premium.png' : '/logo-standard.png'}
+              alt={isPremium ? 'Mi Feria Premium' : 'Mi Feria Estándar'}
+              className={`w-9 h-9 rounded-xl object-contain p-0.5 border shadow-md shrink-0 ${
+                isPremium
+                  ? 'border-amber-500/40 bg-[#0c0903] shadow-amber-500/20'
+                  : 'border-cyan-500/40 bg-[#040812] shadow-cyan-500/20'
+              }`}
+            />
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="font-black text-sm pos-theme-text-title text-white tracking-tight">
                   {state.config.projectName || 'Mi Stand'}
                 </span>
-                <span className="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase bg-cyan-500/15 text-cyan-400 border border-cyan-500/25">
+                <span
+                  className={`text-[9px] px-1.5 py-0.5 rounded font-black uppercase tracking-wider border ${
+                    isPremium
+                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                      : 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
+                  }`}
+                >
                   {isPremium ? 'Premium' : 'Estándar'}
                 </span>
               </div>
-              <span className="text-[10px] pos-theme-text-muted text-gray-400 block truncate max-w-[170px]">
+              <span className="text-[10px] pos-theme-text-muted text-gray-400 block truncate max-w-[140px]">
                 {state.config.standId || 'STAND'}
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             {/* Quick Live Cash Pill */}
-            <div className="px-2.5 py-1 rounded-xl bg-cyan-100/40 dark:bg-cyan-950/40 border border-cyan-300/40 dark:border-cyan-500/30 text-right">
-              <span className="text-[9px] uppercase font-bold text-slate-500 dark:text-gray-400 block -mb-0.5">En Caja</span>
-              <span className="text-xs font-black font-mono text-cyan-700 dark:text-cyan-300">
+            <div className="px-2 py-1 rounded-xl bg-cyan-100/40 dark:bg-cyan-950/40 border border-cyan-300/40 dark:border-cyan-500/30 text-right">
+              <span className="text-[8px] uppercase font-bold text-slate-500 dark:text-gray-400 block -mb-0.5">En Caja</span>
+              <span className="text-[11px] font-black font-mono text-cyan-700 dark:text-cyan-300">
                 {formatCOP(financials.totalSales)}
               </span>
             </div>
 
+            {/* Sound Mute/Unmute Toggle Button */}
+            <button
+              type="button"
+              onClick={toggleAudio}
+              className="p-1.5 rounded-xl text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 active:scale-95 transition-all cursor-pointer"
+              title={soundMuted ? 'Activar Sonidos' : 'Silenciar Sonidos'}
+              aria-label={soundMuted ? 'Activar Sonidos' : 'Silenciar Sonidos'}
+            >
+              {soundMuted ? <VolumeX className="w-3.5 h-3.5 text-rose-400" /> : <Volume2 className="w-3.5 h-3.5 text-cyan-400" />}
+            </button>
+
+            {/* Botón Instalar App */}
+            <InstallAppButton variant="header" />
+
             <ThemeToggle className="scale-85" />
           </div>
         </header>
+
+        {/* DEMO MODE WARNING BANNER */}
+        {!state.config.isConfigured && (
+          <div className="bg-gradient-to-r from-amber-500/25 via-amber-600/20 to-amber-500/25 border-b border-amber-500/40 px-3 py-2 text-xs flex items-center justify-between gap-2 shadow-inner z-15 animate-in fade-in">
+            <div className="flex items-center gap-2 text-amber-200">
+              <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 animate-pulse" />
+              <span className="text-[11px] leading-tight">
+                <strong>Modo Ejemplo:</strong> Datos de prueba activos.
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setActiveTab('config');
+                playBeep();
+              }}
+              className="px-2.5 py-1 rounded-lg bg-amber-400 hover:bg-amber-300 active:scale-95 text-black font-black text-[10px] uppercase tracking-wider shrink-0 transition-all shadow-md shadow-amber-500/30 cursor-pointer touch-manipulation flex items-center gap-1"
+            >
+              <Settings className="w-3 h-3" />
+              <span>Configurar en Tuerca</span>
+            </button>
+          </div>
+        )}
 
         {/* FEEDBACK TOAST NOTIFICATION */}
         {lastSaleFeedback && (
@@ -789,6 +894,36 @@ export const POSApp: React.FC<POSAppProps> = ({ onBackToLanding, onOpenLicenseMo
           {/* TAB 4: ⚙️ CONFIGURACIÓN DEL STAND */}
           {activeTab === 'config' && (
             <div className="space-y-3 animate-in fade-in text-xs">
+              {/* Banner Oficial de la App */}
+              <div className="flex justify-center py-1">
+                <img
+                  src="/banner-miferia.png"
+                  alt="Mi Feria - Punto de Venta Escolar"
+                  className="h-10 w-auto object-contain rounded-xl"
+                />
+              </div>
+
+              {/* Alerta de Modo Ejemplo con Limpieza de Ventas de Prueba */}
+              {!state.config.isConfigured && (
+                <div className="p-4 rounded-2xl bg-amber-500/15 border-2 border-amber-500/40 text-amber-200 space-y-2.5 shadow-lg shadow-amber-950/20">
+                  <div className="flex items-center gap-2 font-black text-amber-300 text-xs uppercase tracking-wider">
+                    <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 animate-bounce" />
+                    <span>Estás usando el Stand de Ejemplo</span>
+                  </div>
+                  <p className="text-[11px] text-gray-300 leading-relaxed">
+                    Personaliza aquí abajo el nombre de tu stand y tus productos. Al presionar este botón, se borrarán las ventas de prueba y tu caja quedará en $0 lista para tu feria real.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleClearDemoAndStartReal}
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-300 text-black font-black text-xs uppercase tracking-wider shadow-lg shadow-amber-500/25 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    <span>Borrar Ventas de Prueba e Iniciar Stand Real</span>
+                  </button>
+                </div>
+              )}
+
               <div className="p-3.5 rounded-2xl pos-theme-card bg-[#0c0c0e] border border-[#1f1f23] space-y-3">
                 <span className="text-[11px] font-bold text-cyan-400 uppercase tracking-wider block">
                   Parámetros del Stand
@@ -918,8 +1053,11 @@ export const POSApp: React.FC<POSAppProps> = ({ onBackToLanding, onOpenLicenseMo
                 </div>
               </div>
 
+              {/* Opción para Instalar App en Pantalla de Inicio */}
+              <InstallAppButton variant="card" />
+
               {/* Exit & Reset Session Section */}
-              <div className="text-center pt-3 space-y-2.5">
+              <div className="text-center pt-2 space-y-2.5">
                 <button
                   type="button"
                   onClick={onBackToLanding}
@@ -1048,6 +1186,72 @@ export const POSApp: React.FC<POSAppProps> = ({ onBackToLanding, onOpenLicenseMo
                 className="flex-1 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold"
               >
                 Sí, Reiniciar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Clear Demo & Setup Real Stand Modal */}
+      {showClearDemoModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4 animate-in fade-in">
+          <div className="w-full max-w-sm rounded-3xl bg-[#0c0c0e] border border-amber-500/50 p-5 text-white shadow-2xl space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+                <Sparkles className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-black text-sm">Configurar mi Stand Real</h4>
+                <p className="text-[11px] text-gray-400">Elimina datos de prueba y deja tu caja en ceros</p>
+              </div>
+            </div>
+
+            <p className="text-xs text-amber-200/90 bg-amber-500/10 p-3 rounded-2xl border border-amber-500/20 leading-relaxed">
+              Al confirmar, las ventas de prueba se borrarán y tu stand quedará listo para tu feria real.
+            </p>
+
+            <div className="space-y-3 text-left">
+              <div>
+                <label className="text-[11px] font-bold text-gray-300 block mb-1">
+                  Nombre de tu Stand / Negocio:
+                </label>
+                <input
+                  type="text"
+                  value={setupStandName}
+                  onChange={(e) => setSetupStandName(e.target.value)}
+                  placeholder="Ej: Delicias Caseras, Arte & Diseño"
+                  className="w-full px-3 py-2.5 rounded-xl bg-black/60 border border-white/10 text-xs text-white focus:outline-none focus:border-amber-400"
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-gray-300 block mb-1">
+                  Costo de Stand o Inversión Inicial (COP):
+                </label>
+                <input
+                  type="text"
+                  value={setupInvestmentStr}
+                  onChange={(e) => setSetupInvestmentStr(formatNumberMask(e.target.value))}
+                  placeholder="Ej: 50.000"
+                  className="w-full px-3 py-2.5 rounded-xl bg-black/60 border border-white/10 text-xs font-mono text-amber-300 focus:outline-none focus:border-amber-400"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-1">
+              <button
+                type="button"
+                onClick={() => setShowClearDemoModal(false)}
+                className="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleClearDemoAndStartReal}
+                className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 text-black font-black text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20 active:scale-95 transition-all"
+              >
+                Iniciar Stand Real
               </button>
             </div>
           </div>

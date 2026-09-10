@@ -1,7 +1,8 @@
 import React, { useState, useId } from 'react';
 import { Key, ArrowRight, Sparkles, AlertCircle, ArrowLeft, Check, ShieldCheck } from 'lucide-react';
 import { PlanType } from '../../types';
-import { calculateNumericStandId, verifyLicenseKey } from '../../lib/crypto';
+import { calculateNumericStandId, verifyLicenseKey, detectMismatchedPlanKey } from '../../lib/crypto';
+import { playSuccess, playWarning } from '../../lib/audio';
 import { ThemeToggle } from '../ThemeToggle';
 import confetti from 'canvas-confetti';
 
@@ -44,6 +45,7 @@ export const ActivationScreen: React.FC<ActivationScreenProps> = ({
     try {
       const isValid = await verifyLicenseKey(inputKey.trim(), standId, cleanStandName, plan);
       if (isValid) {
+        playSuccess();
         try {
           confetti({
             particleCount: 90,
@@ -59,9 +61,18 @@ export const ActivationScreen: React.FC<ActivationScreenProps> = ({
           licenseKey: inputKey.trim().toUpperCase(),
         });
       } else {
-        setErrorMsg(`Código incorrecto para el Stand "${cleanStandName}" (ID ${numericId}). Revisa el plan o el código que te entregaron.`);
+        playWarning();
+        const mismatched = detectMismatchedPlanKey(inputKey.trim(), standId, cleanStandName, plan);
+        if (mismatched === 'standard' && plan === 'premium') {
+          setErrorMsg(`⚠️ Este código pertenece al Plan Estándar ($10.000). Selecciona "Estándar" arriba para activarlo.`);
+        } else if (mismatched === 'premium' && plan === 'standard') {
+          setErrorMsg(`⚠️ Este código pertenece al Plan Premium ($18.000). Selecciona "Premium" arriba para activarlo.`);
+        } else {
+          setErrorMsg(`Código incorrecto para el Stand "${cleanStandName}" (ID ${numericId}) en Plan ${plan === 'premium' ? 'Premium' : 'Estándar'}.`);
+        }
       }
     } catch {
+      playWarning();
       setErrorMsg('Error de validación. Intenta de nuevo.');
     } finally {
       setIsVerifying(false);
@@ -70,7 +81,9 @@ export const ActivationScreen: React.FC<ActivationScreenProps> = ({
 
   return (
     <div className="min-h-screen pos-theme-screen bg-[#050505] text-white flex flex-col items-center justify-center p-4 selection:bg-cyan-500/30 transition-colors">
-      <div className="w-full max-w-sm rounded-[28px] pos-theme-card bg-[#0c0c0e] border border-cyan-500/30 p-6 shadow-2xl relative text-center">
+      <div className={`w-full max-w-sm rounded-[28px] pos-theme-card bg-[#0c0c0e] border p-6 shadow-2xl relative text-center transition-all ${
+        plan === 'premium' ? 'border-cyan-500/40' : 'border-cyan-500/30'
+      }`}>
         {/* Back Link & Theme */}
         <div className="flex items-center justify-between mb-4">
           <button
@@ -82,16 +95,20 @@ export const ActivationScreen: React.FC<ActivationScreenProps> = ({
             <span>Volver a la tienda</span>
           </button>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-widest">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border bg-cyan-500/15 text-cyan-300 border-cyan-500/30">
               {plan === 'premium' ? 'Premium' : 'Estándar'}
             </span>
             <ThemeToggle className="scale-75" />
           </div>
         </div>
 
-        {/* Icon */}
-        <div className="w-14 h-14 rounded-2xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-400 flex items-center justify-center mx-auto mb-3">
-          <Key className="w-7 h-7" />
+        {/* Dynamic Plan Logo Asset */}
+        <div className="flex justify-center mb-3">
+          <img
+            src={plan === 'premium' ? '/logo-premium.png' : '/logo-standard.png'}
+            alt={plan === 'premium' ? 'Mi Feria Premium' : 'Mi Feria Estándar'}
+            className="w-16 h-16 rounded-2xl object-contain p-1 border border-cyan-500/40 bg-black/60 shadow-xl shadow-cyan-500/10"
+          />
         </div>
 
         <h1 className="text-lg font-black uppercase tracking-tight mb-1 pos-theme-text-title text-white">
@@ -111,7 +128,7 @@ export const ActivationScreen: React.FC<ActivationScreenProps> = ({
             }}
             className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all ${
               plan === 'standard'
-                ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300'
+                ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-md shadow-cyan-500/10'
                 : 'bg-white/5 border-white/10 text-gray-400'
             }`}
           >
@@ -125,7 +142,7 @@ export const ActivationScreen: React.FC<ActivationScreenProps> = ({
             }}
             className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-1 ${
               plan === 'premium'
-                ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300'
+                ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-md shadow-cyan-500/10'
                 : 'bg-white/5 border-white/10 text-gray-400'
             }`}
           >

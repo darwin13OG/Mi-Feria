@@ -173,7 +173,7 @@ ${subSeparator}
 * Producto Estrella: ${fin.starProduct ? `${fin.starProduct.product.name} (${fin.starProduct.sold} uds - ${formatCOP(fin.starProduct.revenue)})` : 'N/A'}
 * Veredicto Contable: ${fin.netProfit >= 0 ? 'META SUPERADA CON ÉXITO' : `FALTAN ${formatCOP(fin.missingToBreakEven)} PARA EL EQUILIBRIO`}
 
-Generado con Sistema Offline Mi Feria PWA.
+Generado con Sistema Offline Mi Feria App.
 ${separator}
 `.trim();
 }
@@ -195,6 +195,6 @@ export function generateWhatsAppSummary(state: AppState): string {
     `📈 *ROI:* ${fin.roi.toFixed(1)}%\n` +
     `📦 *Unidades Vendidas:* ${fin.totalUnitsSold} uds\n` +
     `⭐ *Top Producto:* ${fin.starProduct ? fin.starProduct.product.name : 'N/A'}\n\n` +
-    `_Generado al instante desde Mi Feria PWA (100% Offline)_`
+    `_Generado al instante desde Mi Feria App (100% Offline)_`
   );
 }

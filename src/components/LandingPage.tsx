@@ -205,16 +205,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* Top Floating Navigation */}
       <header className="sticky top-0 z-30 w-full backdrop-blur-xl bg-[#050505]/90 border-b border-[#1f1f23] dark:bg-[#050505]/90 dark:border-[#1f1f23] light:bg-white/90 light:border-slate-200">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          {/* Logo con trigger secreto de 3 toques */}
+          {/* Banner Oficial en la Cabecera con trigger secreto de 3 toques */}
           <div
             onClick={handleSecretAdminTrigger}
-            className="flex items-center gap-2.5 cursor-pointer select-none active:scale-95 transition-transform touch-manipulation"
-            title="Mi Feria — Punto de Venta Escolar"
+            className="flex items-center cursor-pointer select-none active:scale-95 transition-transform touch-manipulation py-1"
+            title="Mi Feria — Punto de Venta Escolar (3 toques para organizador)"
           >
-            <img src="/icon.svg" alt="Mi Feria Logo" className="w-8 h-8 rounded-xl shadow-md shadow-cyan-500/30" />
-            <span className="font-extrabold text-lg tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-500">
-              Mi Feria
-            </span>
+            <img
+              src="/banner-miferia.png"
+              alt="Mi Feria"
+              className="h-10 sm:h-11 w-auto object-contain rounded-xl"
+            />
           </div>
 
           {/* Botón de Menú de 3 Barras (Restaurado en todos los dispositivos) */}
@@ -486,14 +487,26 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch max-w-4xl mx-auto">
           {/* Plan Estándar */}
-          <div className="p-7 rounded-3xl bg-[#0c0c0e] border border-[#1f1f23] flex flex-col justify-between relative hover:border-slate-600 transition-all">
+          <div className="p-7 rounded-3xl bg-[#080d14] border border-cyan-500/30 flex flex-col justify-between relative hover:border-cyan-500/60 transition-all shadow-xl shadow-cyan-950/20">
             <div>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
-                  Plan Inicial
-                </span>
-                <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-white/5 text-gray-300 font-medium">
-                  Ideal stand individual
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <img
+                    src="/logo-standard.png"
+                    alt="Mi Feria Estándar"
+                    className="w-11 h-11 rounded-2xl shadow-md shadow-cyan-500/20 border border-cyan-500/30 object-contain p-0.5 bg-[#03060a]"
+                  />
+                  <div>
+                    <span className="text-xs font-black uppercase tracking-wider text-cyan-400 block">
+                      Plan Estándar
+                    </span>
+                    <span className="text-[11px] text-gray-400">
+                      Ideal stand individual
+                    </span>
+                  </div>
+                </div>
+                <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 font-bold uppercase">
+                  Básico
                 </span>
               </div>
 
@@ -575,18 +588,30 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </div>
 
           {/* Plan Premium - Más Completo */}
-          <div className="p-7 rounded-3xl bg-gradient-to-b from-[#0e1626] to-[#0c0c12] border-2 border-cyan-400 flex flex-col justify-between relative shadow-2xl shadow-cyan-950/40">
+          <div className="p-7 rounded-3xl bg-[#0a0d14] border-2 border-cyan-500/50 flex flex-col justify-between relative shadow-2xl shadow-cyan-950/40 hover:border-cyan-400 transition-all">
             {/* Pill badge */}
-            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-extrabold text-[11px] tracking-widest uppercase shadow-md">
-              MÁS COMPLETO
+            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-extrabold text-[11px] tracking-widest uppercase shadow-md shadow-cyan-500/20">
+              MÁS POPULAR
             </div>
 
             <div>
-              <div className="flex justify-between items-center mb-4 pt-1">
-                <span className="text-xs font-bold uppercase tracking-wider text-cyan-300 flex items-center gap-1">
-                  <Sparkles className="w-3.5 h-3.5" /> Edición Completa
-                </span>
-                <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-200 border border-cyan-500/30 font-semibold">
+              <div className="flex items-center justify-between mb-4 pt-1">
+                <div className="flex items-center gap-3">
+                  <img
+                    src="/logo-premium.png"
+                    alt="Mi Feria Premium"
+                    className="w-11 h-11 rounded-2xl shadow-lg shadow-cyan-500/20 border border-cyan-500/40 object-contain p-0.5 bg-[#05070c]"
+                  />
+                  <div>
+                    <span className="text-xs font-black uppercase tracking-wider text-cyan-300 flex items-center gap-1">
+                      <Sparkles className="w-3.5 h-3.5 text-cyan-400" /> Plan Premium
+                    </span>
+                    <span className="text-[11px] text-gray-400">
+                      Edición Completa y Reportes
+                    </span>
+                  </div>
+                </div>
+                <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold uppercase">
                   Acceso Total
                 </span>
               </div>
@@ -596,8 +621,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 La experiencia definitiva con acta de cierre para imprimir, calculadora de vuelto y registro de gastos extras.
               </p>
 
-              <div className="flex items-baseline gap-2 mb-6 pb-6 border-b border-cyan-500/20">
-                <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-400">
+              <div className="flex items-baseline gap-2 mb-6 pb-6 border-b border-white/10">
+                <span className="text-4xl font-black text-white">
                   $18.000
                 </span>
                 <span className="text-xs text-gray-400 font-semibold">COP / Stand</span>
