@@ -49,6 +49,25 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   const [activeModule, setActiveModule] = useState<number>(0);
   const [secretClicks, setSecretClicks] = useState(0);
 
+  // Auto-reset secret click counter if not completed within 2 seconds
+  useEffect(() => {
+    if (secretClicks > 0) {
+      const timer = setTimeout(() => setSecretClicks(0), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [secretClicks]);
+
+  const handleSecretAdminTrigger = () => {
+    setSecretClicks((prev) => {
+      const next = prev + 1;
+      if (next >= 3) {
+        setAdminModalOpen(true);
+        return 0;
+      }
+      return next;
+    });
+  };
+
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -89,16 +108,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       }
     } catch {}
   }, []);
-
-  const handleSecretAdminTrigger = () => {
-    setSecretClicks((prev) => {
-      if (prev + 1 >= 3) {
-        setAdminModalOpen(true);
-        return 0;
-      }
-      return prev + 1;
-    });
-  };
 
   // 9 Modules detailed
   const modules = [
@@ -171,7 +180,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   const faqs = [
     {
       q: '¿Funciona de verdad si en el colegio o feria no hay señal de internet?',
-      a: '¡100% garantizado! Mi Feria está construida con tecnología PWA de vanguardia. Una vez abierta, todos los cálculos, ventas y reportes operan de forma local en la memoria de tu dispositivo sin gastar un solo mega.',
+      a: '¡100% garantizado! Mi Feria funciona de manera 100% local en tu navegador. Una vez abierta, todos los cálculos, ventas y reportes operan en la memoria de tu dispositivo sin gastar datos ni requerir señal.',
     },
     {
       q: '¿Qué pasa si el celular se descarga o la página se cierra por accidente?',
@@ -196,10 +205,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* Top Floating Navigation */}
       <header className="sticky top-0 z-30 w-full backdrop-blur-xl bg-[#050505]/90 border-b border-[#1f1f23] dark:bg-[#050505]/90 dark:border-[#1f1f23] light:bg-white/90 light:border-slate-200">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          {/* Logo */}
+          {/* Logo con trigger secreto de 3 toques */}
           <div
             onClick={handleSecretAdminTrigger}
-            className="flex items-center gap-2.5 cursor-pointer select-none active:scale-95 transition-transform"
+            className="flex items-center gap-2.5 cursor-pointer select-none active:scale-95 transition-transform touch-manipulation"
             title="Mi Feria — Punto de Venta Escolar"
           >
             <img src="/icon.svg" alt="Mi Feria Logo" className="w-8 h-8 rounded-xl shadow-md shadow-cyan-500/30" />
@@ -208,38 +217,29 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
-            {/* Quick Admin Access Button for Mobile and Desktop */}
-            <button
-              type="button"
-              onClick={() => setAdminModalOpen(true)}
-              className="p-2 sm:px-3 sm:py-2 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-gray-300 hover:text-cyan-400 border border-white/10 flex items-center gap-1.5 text-xs font-semibold transition-all cursor-pointer"
-              title="Acceso Organizador / Generador de Claves"
-            >
-              <Lock className="w-3.5 h-3.5 text-cyan-400" />
-              <span className="hidden sm:inline">Admin</span>
-            </button>
-
-            {/* Mobile 3-lines Hamburger Menu Button */}
-            <button
-              type="button"
-              id="mobile-nav-toggle-btn"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2.5 rounded-xl text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 sm:hidden border border-white/10 transition-colors cursor-pointer active:scale-95"
-              aria-label="Abrir menú de navegación"
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5 text-cyan-400" /> : <Menu className="w-5 h-5" />}
-            </button>
-          </div>
+          {/* Botón de Menú de 3 Barras (Restaurado en todos los dispositivos) */}
+          <button
+            type="button"
+            id="nav-toggle-btn"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2.5 rounded-xl text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 transition-all cursor-pointer touch-manipulation flex items-center gap-2"
+            aria-label="Abrir menú de navegación"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5 text-cyan-400" /> : <Menu className="w-5 h-5 text-gray-200" />}
+          </button>
         </div>
 
-        {/* Mobile Slide-Down Quick Menu */}
-        {mobileMenuOpen && (
-          <div className="sm:hidden border-b border-[#1f1f23] bg-[#0c0c10]/98 backdrop-blur-2xl px-4 py-4 space-y-2 animate-in slide-in-from-top-2 shadow-2xl">
+        {/* Slide-Down Quick Menu con transición suave y fluida */}
+        <div
+          className={`overflow-hidden transition-all duration-400 ease-in-out border-b border-[#1f1f23] bg-[#0c0c10]/98 backdrop-blur-2xl shadow-2xl ${
+            mobileMenuOpen ? 'max-h-[420px] opacity-100 py-3' : 'max-h-0 opacity-0 py-0 border-transparent pointer-events-none'
+          }`}
+        >
+          <div className="max-w-6xl mx-auto px-4 space-y-1.5">
             <button
               type="button"
               onClick={() => handleMobileNav(() => scrollToSection('precios'))}
-              className="w-full text-left p-3.5 rounded-xl hover:bg-white/5 active:bg-white/10 text-xs font-bold text-gray-200 flex items-center gap-3 transition-colors cursor-pointer"
+              className="w-full text-left p-3 rounded-xl hover:bg-white/5 active:bg-white/10 text-xs font-bold text-gray-200 flex items-center gap-3 transition-colors cursor-pointer touch-manipulation"
             >
               <DollarSign className="w-4 h-4 text-cyan-400" />
               <span>Ver Licencias y Precios ($10k y $18k)</span>
@@ -248,7 +248,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <button
               type="button"
               onClick={() => handleMobileNav(() => openAndScrollToCash())}
-              className="w-full text-left p-3.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 active:bg-emerald-500/30 border border-emerald-500/20 text-xs font-bold text-emerald-300 flex items-center gap-3 transition-colors cursor-pointer"
+              className="w-full text-left p-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 active:bg-emerald-500/30 border border-emerald-500/20 text-xs font-bold text-emerald-300 flex items-center gap-3 transition-colors cursor-pointer touch-manipulation"
             >
               <DollarSign className="w-4 h-4 text-emerald-400" />
               <span>Pagar en Efectivo en el Colegio</span>
@@ -257,7 +257,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <button
               type="button"
               onClick={() => handleMobileNav(() => onOpenActivation())}
-              className="w-full text-left p-3.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 active:bg-cyan-500/35 border border-cyan-500/30 text-xs font-black text-cyan-300 flex items-center gap-3 transition-colors cursor-pointer"
+              className="w-full text-left p-3 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 active:bg-cyan-500/35 border border-cyan-500/30 text-xs font-black text-cyan-300 flex items-center gap-3 transition-colors cursor-pointer touch-manipulation"
             >
               <Key className="w-4 h-4 text-cyan-400" />
               <span>Activar mi Stand con Código</span>
@@ -266,7 +266,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <button
               type="button"
               onClick={() => handleMobileNav(() => scrollToSection('modulos'))}
-              className="w-full text-left p-3.5 rounded-xl hover:bg-white/5 active:bg-white/10 text-xs font-bold text-gray-200 flex items-center gap-3 transition-colors cursor-pointer"
+              className="w-full text-left p-3 rounded-xl hover:bg-white/5 active:bg-white/10 text-xs font-bold text-gray-200 flex items-center gap-3 transition-colors cursor-pointer touch-manipulation"
             >
               <Layers className="w-4 h-4 text-cyan-400" />
               <span>Los 9 Módulos del Sistema</span>
@@ -275,22 +275,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <button
               type="button"
               onClick={() => handleMobileNav(() => scrollToSection('faqs'))}
-              className="w-full text-left p-3.5 rounded-xl hover:bg-white/5 active:bg-white/10 text-xs font-bold text-gray-200 flex items-center gap-3 transition-colors cursor-pointer"
+              className="w-full text-left p-3 rounded-xl hover:bg-white/5 active:bg-white/10 text-xs font-bold text-gray-200 flex items-center gap-3 transition-colors cursor-pointer touch-manipulation"
             >
               <HelpCircle className="w-4 h-4 text-cyan-400" />
               <span>Preguntas Frecuentes</span>
             </button>
-
-            <button
-              type="button"
-              onClick={() => handleMobileNav(() => setAdminModalOpen(true))}
-              className="w-full text-left p-3.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 active:bg-purple-500/30 border border-purple-500/30 text-xs font-bold text-purple-300 flex items-center gap-3 transition-colors cursor-pointer"
-            >
-              <Lock className="w-4 h-4 text-purple-400" />
-              <span>Acceso Organizador / Admin (Generar Claves)</span>
-            </button>
           </div>
-        )}
+        </div>
       </header>
 
       {/* Hero Section */}
@@ -480,7 +471,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       </section>
 
       {/* Planes y Precios con Enlaces Reales */}
-      <section id="precios" className="py-20 px-4 max-w-5xl mx-auto border-b border-white/5">
+      <section id="precios" className="py-20 px-4 max-w-5xl mx-auto border-b border-white/5 scroll-mt-20">
         <div className="text-center mb-14">
           <span className="text-xs font-bold text-cyan-400 tracking-widest uppercase">
             Inversión Garantizada
@@ -720,58 +711,64 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </div>
             </button>
 
-            {/* Contenido desplegable suave */}
-            {cashSectionOpen && (
-              <div className="p-5 sm:p-8 pt-0 border-t border-emerald-500/20 animate-in fade-in slide-in-from-top-2 duration-300">
-                <p className="text-xs sm:text-sm text-emerald-100/80 mb-5 leading-relaxed pt-4">
-                  Sin comisiones bancarias ni tarjetas. Entrega el dinero en físico a la coordinación del evento y recibe tu código oficial de 6 dígitos.
-                </p>
+            {/* Contenido desplegable suave con animación fluida */}
+            <div
+              className={`grid transition-all duration-500 ease-in-out ${
+                cashSectionOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+              }`}
+            >
+              <div className="overflow-hidden">
+                <div className="p-5 sm:p-8 pt-0 border-t border-emerald-500/20">
+                  <p className="text-xs sm:text-sm text-emerald-100/80 mb-5 leading-relaxed pt-4">
+                    Sin comisiones bancarias ni tarjetas. Entrega el dinero en físico a la coordinación del evento y recibe tu código oficial de 6 dígitos.
+                  </p>
 
-                {/* Pasos para el pago */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-black/40 border border-emerald-500/20 space-y-3 mb-6">
-                  <h4 className="font-bold text-xs sm:text-sm text-emerald-300 flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                    Pasos para Pago en Efectivo:
-                  </h4>
-                  <ol className="list-decimal pl-4 space-y-2 text-xs sm:text-sm text-gray-200 leading-relaxed font-medium">
-                    <li>
-                      Acércate a la <strong>Coordinación del Evento</strong> en el colegio o comunícate vía WhatsApp al <span className="text-emerald-300 font-bold">+57 321 832 2388</span>.
-                    </li>
-                    <li>
-                      Entrega el valor de tu licencia: <strong>$10.000 COP</strong> (Estándar) o <strong>$18.000 COP</strong> (Premium).
-                    </li>
-                    <li>
-                      Indica el nombre exacto de tu stand. El organizador generará tu <strong className="text-cyan-300">Código Oficial de 6 dígitos</strong>.
-                    </li>
-                    <li>
-                      Presiona el botón <strong>«Activar Stand con Código (6 Dígitos)»</strong>, escribe tu stand y la clave para desbloquear el punto de venta.
-                    </li>
-                  </ol>
-                </div>
+                  {/* Pasos para el pago */}
+                  <div className="p-4 sm:p-5 rounded-2xl bg-black/40 border border-emerald-500/20 space-y-3 mb-6">
+                    <h4 className="font-bold text-xs sm:text-sm text-emerald-300 flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                      Pasos para Pago en Efectivo:
+                    </h4>
+                    <ol className="list-decimal pl-4 space-y-2 text-xs sm:text-sm text-gray-200 leading-relaxed font-medium">
+                      <li>
+                        Acércate a la <strong>Coordinación del Evento</strong> en el colegio o comunícate vía WhatsApp al <span className="text-emerald-300 font-bold">+57 321 832 2388</span>.
+                      </li>
+                      <li>
+                        Entrega el valor de tu licencia: <strong>$10.000 COP</strong> (Estándar) o <strong>$18.000 COP</strong> (Premium).
+                      </li>
+                      <li>
+                        Indica el nombre exacto de tu stand. El organizador generará tu <strong className="text-cyan-300">Código Oficial de 6 dígitos</strong>.
+                      </li>
+                      <li>
+                        Presiona el botón <strong>«Activar Stand con Código (6 Dígitos)»</strong>, escribe tu stand y la clave para desbloquear el punto de venta.
+                      </li>
+                    </ol>
+                  </div>
 
-                {/* Acciones: WhatsApp + Único Botón de Activación */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                  <a
-                    href="https://wa.me/573218322388?text=%C2%A1Hola!%20Quiero%20pagar%20mi%20licencia%20de%20Mi%20Feria%20en%20efectivo%20en%20el%20colegio.%20Mi%20stand%20es:%20"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full py-4 px-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-black font-black text-xs tracking-wider uppercase transition-all shadow-lg shadow-emerald-500/30 flex items-center justify-center gap-2 cursor-pointer"
-                  >
-                    <MessageCircle className="w-4 h-4" />
-                    <span>Coordinar Pago por WhatsApp</span>
-                  </a>
+                  {/* Acciones: WhatsApp + Único Botón de Activación */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                    <a
+                      href="https://wa.me/573218322388?text=%C2%A1Hola!%20Quiero%20pagar%20mi%20licencia%20de%20Mi%20Feria%20en%20efectivo%20en%20el%20colegio.%20Mi%20stand%20es:%20"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full py-4 px-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-black font-black text-xs tracking-wider uppercase transition-all shadow-lg shadow-emerald-500/30 flex items-center justify-center gap-2 cursor-pointer touch-manipulation"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      <span>Coordinar Pago por WhatsApp</span>
+                    </a>
 
-                  <button
-                    type="button"
-                    onClick={() => onOpenActivation()}
-                    className="w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-500 hover:from-cyan-300 hover:to-blue-400 active:scale-95 text-black font-black text-xs tracking-wider uppercase transition-all shadow-xl shadow-cyan-500/25 flex items-center justify-center gap-2 cursor-pointer"
-                  >
-                    <Key className="w-4 h-4" />
-                    <span>Activar Stand con Código (6 Dígitos)</span>
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => onOpenActivation()}
+                      className="w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-500 hover:from-cyan-300 hover:to-blue-400 active:scale-95 text-black font-black text-xs tracking-wider uppercase transition-all shadow-xl shadow-cyan-500/25 flex items-center justify-center gap-2 cursor-pointer touch-manipulation"
+                    >
+                      <Key className="w-4 h-4" />
+                      <span>Activar Stand con Código (6 Dígitos)</span>
+                    </button>
+                  </div>
                 </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
 
@@ -933,11 +930,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                     )}
                   </div>
                 </button>
-                {isOpen && (
-                  <div className="p-4 sm:p-5 pt-0 text-xs sm:text-sm text-gray-300 leading-relaxed border-t border-white/5 animate-in fade-in duration-200">
-                    <p className="pt-3">{faq.a}</p>
+                {/* Contenido FAQ con transición suave y pausada */}
+                <div
+                  className={`grid transition-all duration-400 ease-in-out ${
+                    isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                  }`}
+                >
+                  <div className="overflow-hidden">
+                    <div className="p-4 sm:p-5 pt-0 text-xs sm:text-sm text-gray-300 leading-relaxed border-t border-white/5">
+                      <p className="pt-3">{faq.a}</p>
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
             );
           })}
@@ -945,27 +949,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       </section>
 
       {/* Footer Minimalista */}
-      <footer className="py-8 px-4 max-w-6xl mx-auto text-center text-xs text-gray-500 border-t border-white/5 space-y-3">
+      <footer className="py-8 px-4 max-w-6xl mx-auto text-center text-xs text-gray-500 border-t border-white/5">
         <div 
           onClick={handleSecretAdminTrigger}
-          className="inline-flex items-center justify-center gap-2 cursor-pointer select-none"
+          className="inline-flex items-center justify-center gap-2 cursor-pointer select-none touch-manipulation active:scale-95 transition-transform"
           title="Mi Feria"
         >
           <img src="/icon.svg" alt="Mi Feria" className="w-5 h-5 rounded-md" />
           <span className="font-semibold text-gray-400 hover:text-gray-300 transition-colors">
             Mi Feria © {new Date().getFullYear()} • Sistema de Gestión y Ventas
           </span>
-        </div>
-
-        <div>
-          <button
-            type="button"
-            onClick={() => setAdminModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 active:scale-95 text-[11px] font-medium text-gray-400 hover:text-cyan-300 transition-all cursor-pointer"
-          >
-            <Lock className="w-3 h-3 text-cyan-400" />
-            <span>Acceso Administración / Organizador</span>
-          </button>
         </div>
       </footer>
 

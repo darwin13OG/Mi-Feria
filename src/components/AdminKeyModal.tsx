@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Key, Copy, Check, Share2, X, Lock, Sparkles, Hash } from 'lucide-react';
+import { ShieldCheck, Key, Copy, Check, Share2, X, Lock, Sparkles } from 'lucide-react';
 import { calculateNumericStandId, generateNumericKey } from '../lib/crypto';
 
 interface AdminKeyModalProps {
@@ -18,13 +18,12 @@ export const AdminKeyModal: React.FC<AdminKeyModalProps> = ({ isOpen, onClose })
 
   const handleAuth = (e: React.FormEvent) => {
     e.preventDefault();
-    // Admin PIN check
     const cleanPin = pinInput.trim().toUpperCase();
     if (cleanPin === '2026' || cleanPin === 'DARWIN' || cleanPin === 'ADMIN') {
       setIsAuthenticated(true);
       setPinError('');
     } else {
-      setPinError('Acceso no autorizado.');
+      setPinError('PIN incorrecto. Ingresa el código de coordinación.');
     }
   };
 
@@ -34,138 +33,150 @@ export const AdminKeyModal: React.FC<AdminKeyModalProps> = ({ isOpen, onClose })
   const premiumKey = numericId > 0 ? generateNumericKey(numericId, 'premium') : 0;
 
   const handleCopy = (text: string, label: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedKey(label);
-    setTimeout(() => setCopiedKey(null), 2000);
+    try {
+      navigator.clipboard.writeText(text);
+      setCopiedKey(label);
+      setTimeout(() => setCopiedKey(null), 2000);
+    } catch {
+      // ignore
+    }
   };
 
   const handleShareWhatsApp = (planType: 'Estándar' | 'Premium', key: number) => {
     const message = 
       `🎫 *MI FERIA - CLAVE DE ACTIVACIÓN OFICIAL*\n\n` +
       `🏢 *Stand:* ${cleanStand}\n` +
-      `🆔 *ID Asignado:* ${numericId}\n` +
-      `⭐ *Versión:* ${planType}\n` +
-      `🔑 *Código de Activación:* ${key}\n\n` +
-      `📲 *Instrucciones:*\n` +
-      `1. Abre la aplicación desde el enlace.\n` +
-      `2. Presiona "Activar Stand con Código".\n` +
-      `3. Escribe tu Stand y pega tu código para desbloquear la caja offline.`;
+      `🆔 *ID:* ${numericId}\n` +
+      `⭐ *Plan:* ${planType}\n` +
+      `🔑 *Clave de 6 Dígitos:* ${key}\n\n` +
+      `📲 *Instrucciones para desbloquear:*\n` +
+      `1. Abre Mi Feria en tu celular.\n` +
+      `2. Toca "Activar Stand con Código".\n` +
+      `3. Escribe tu stand exacto y digita tu clave. ¡Listo!`;
     
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-3 sm:p-4 animate-in fade-in overflow-y-auto">
-      <div className="w-full max-w-md my-auto max-h-[92vh] overflow-y-auto rounded-3xl bg-[#0c0c0e] border border-cyan-500/40 p-5 sm:p-6 text-white shadow-2xl relative">
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-full bg-white/5 hover:bg-white/10 active:scale-95 text-gray-400 hover:text-white transition-all cursor-pointer"
-          aria-label="Cerrar modal"
-        >
-          <X className="w-5 h-5" />
-        </button>
+    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/90 backdrop-blur-md p-3 sm:p-4 overflow-y-auto pt-6 sm:pt-10">
+      <div className="w-full max-w-sm sm:max-w-md rounded-2xl sm:rounded-3xl bg-[#0e0e12] border border-cyan-500/40 p-4 sm:p-6 text-white shadow-2xl relative my-auto">
+        {/* Header con botón X siempre visible y destacado */}
+        <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
+              {isAuthenticated ? <ShieldCheck className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
+            </div>
+            <div>
+              <h3 className="text-sm sm:text-base font-black uppercase tracking-tight text-white">
+                {isAuthenticated ? 'Generador de Claves' : 'Acceso Coordinación'}
+              </h3>
+              <span className="text-[10px] text-cyan-400 font-mono block">
+                {isAuthenticated ? 'Modo Organizador Activo' : 'Seguridad Interna'}
+              </span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-2 rounded-full bg-white/10 hover:bg-white/20 active:scale-90 text-white border border-white/20 transition-all cursor-pointer touch-manipulation"
+            aria-label="Cerrar ventana"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
 
         {!isAuthenticated ? (
-          <form onSubmit={handleAuth} className="text-center space-y-4 py-2">
-            <div className="w-12 h-12 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center mx-auto">
-              <Lock className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-black uppercase tracking-tight">
-              Acceso Organizador / Admin
-            </h3>
-            <p className="text-xs text-gray-400 max-w-xs mx-auto leading-relaxed">
-              Herramienta exclusiva de la coordinación para generar claves instantáneas a stands que pagan en efectivo en el colegio.
+          <form onSubmit={handleAuth} className="space-y-4 py-1">
+            <p className="text-xs text-gray-300 leading-relaxed text-center">
+              Panel privado para generar claves de activación de 6 dígitos a los stands que pagan en efectivo.
             </p>
 
-            <div className="max-w-xs mx-auto">
+            <div>
               <input
                 type="password"
+                inputMode="numeric"
                 required
                 autoFocus
                 value={pinInput}
                 onChange={(e) => setPinInput(e.target.value)}
-                placeholder="Ingresa PIN de seguridad"
-                className="w-full px-4 py-3 rounded-xl bg-black/80 border border-white/20 text-center font-mono text-lg font-bold text-cyan-300 focus:outline-none focus:border-cyan-400"
+                placeholder="Digita el PIN"
+                className="w-full px-4 py-3 rounded-xl bg-black/80 border border-white/20 text-center font-mono text-xl font-bold text-cyan-300 focus:outline-none focus:border-cyan-400"
               />
               {pinError && (
-                <span className="text-[11px] text-rose-400 mt-1.5 block font-medium">
+                <span className="text-[11px] text-rose-400 mt-1.5 block font-medium text-center">
                   {pinError}
                 </span>
               )}
             </div>
 
-            <button
-              type="submit"
-              className="w-full max-w-xs mx-auto py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 active:scale-95 text-black font-black uppercase tracking-wider text-xs shadow-lg shadow-cyan-500/20 transition-all cursor-pointer"
-            >
-              Ingresar al Generador
-            </button>
+            <div className="space-y-2 pt-1">
+              <button
+                type="submit"
+                className="w-full py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 active:scale-95 text-black font-black uppercase tracking-wider text-xs shadow-lg shadow-cyan-500/20 transition-all cursor-pointer touch-manipulation"
+              >
+                Entrar al Generador
+              </button>
+
+              <button
+                type="button"
+                onClick={onClose}
+                className="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-gray-400 text-xs font-semibold transition-all cursor-pointer touch-manipulation"
+              >
+                Cancelar
+              </button>
+            </div>
           </form>
         ) : (
-          <div className="space-y-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
-                <ShieldCheck className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-base font-black uppercase tracking-tight text-white">
-                  Generador de Claves (Efectivo)
-                </h3>
-                <span className="text-[10px] text-cyan-400 font-mono">Modo Administrador Activo</span>
-              </div>
-            </div>
-
+          <div className="space-y-3.5">
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">
-                Nombre del Stand que pagó en efectivo
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1">
+                Nombre del Stand:
               </label>
               <input
                 type="text"
                 autoFocus
                 value={standName}
                 onChange={(e) => setStandName(e.target.value.toUpperCase())}
-                placeholder="EJ: STAND DELICIAS"
-                className="w-full px-3.5 py-3 rounded-xl bg-black/70 border border-white/15 text-sm font-bold uppercase text-white focus:outline-none focus:border-cyan-400"
+                placeholder="Ej: STAND AREPAS"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-black/80 border border-white/20 text-sm font-bold uppercase text-white focus:outline-none focus:border-cyan-400"
               />
             </div>
 
             {numericId > 0 ? (
-              <div className="space-y-3 pt-1">
-                {/* ID block */}
-                <div className="p-2.5 rounded-xl bg-black/50 border border-white/10 flex items-center justify-between text-xs">
-                  <span className="text-gray-400">ID Numérico de Stand:</span>
-                  <span className="font-mono font-black text-cyan-300 text-base">{numericId}</span>
+              <div className="space-y-2.5 pt-1">
+                {/* ID badge */}
+                <div className="px-3 py-1.5 rounded-lg bg-black/50 border border-white/10 flex items-center justify-between text-xs">
+                  <span className="text-gray-400">ID del Stand:</span>
+                  <span className="font-mono font-black text-cyan-300">{numericId}</span>
                 </div>
 
                 {/* Standard Plan Key */}
-                <div className="p-3 rounded-2xl bg-white/5 border border-white/10 space-y-2">
+                <div className="p-3 rounded-xl bg-white/5 border border-white/10 space-y-2">
                   <div className="flex items-center justify-between">
                     <div>
                       <span className="text-[10px] font-black uppercase text-gray-400 block">
-                        Versión Estándar ($10.000)
+                        Estándar ($10.000)
                       </span>
-                      <span className="text-[10px] text-emerald-400 font-medium">
-                        Código Oficial de 6 Dígitos
-                      </span>
+                      <span className="text-[10px] text-emerald-400 font-medium">Clave Oficial</span>
                     </div>
-                    <div className="text-2xl font-black font-mono text-white">
+                    <div className="text-xl font-black font-mono text-white tracking-widest">
                       {standardKey}
                     </div>
                   </div>
-                  <div className="flex gap-2 pt-1">
+                  <div className="flex gap-2">
                     <button
                       type="button"
                       onClick={() => handleCopy(String(standardKey), 'std')}
-                      className="flex-1 py-2 rounded-lg bg-white/10 hover:bg-white/20 active:scale-95 text-[11px] font-bold text-white flex items-center justify-center gap-1 cursor-pointer transition-all"
+                      className="flex-1 py-2 rounded-lg bg-white/10 hover:bg-white/20 active:scale-95 text-[11px] font-bold text-white flex items-center justify-center gap-1 cursor-pointer transition-all touch-manipulation"
                     >
                       {copiedKey === 'std' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                      <span>{copiedKey === 'std' ? '¡Copiado!' : 'Copiar Clave'}</span>
+                      <span>{copiedKey === 'std' ? '¡Copiado!' : 'Copiar'}</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => handleShareWhatsApp('Estándar', standardKey)}
-                      className="px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-[11px] font-bold text-white flex items-center justify-center gap-1 cursor-pointer transition-all"
+                      className="px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-[11px] font-bold text-white flex items-center justify-center gap-1 cursor-pointer transition-all touch-manipulation"
                       title="Enviar por WhatsApp"
                     >
                       <Share2 className="w-3.5 h-3.5" />
@@ -175,33 +186,31 @@ export const AdminKeyModal: React.FC<AdminKeyModalProps> = ({ isOpen, onClose })
                 </div>
 
                 {/* Premium Plan Key */}
-                <div className="p-3 rounded-2xl bg-gradient-to-r from-cyan-950/40 to-blue-950/40 border border-cyan-500/40 space-y-2">
+                <div className="p-3 rounded-xl bg-cyan-950/40 border border-cyan-500/40 space-y-2">
                   <div className="flex items-center justify-between">
                     <div>
                       <span className="text-[10px] font-black uppercase text-cyan-300 flex items-center gap-1">
-                        <Sparkles className="w-3 h-3 text-cyan-400" /> Versión Premium ($18.000)
+                        <Sparkles className="w-3 h-3 text-cyan-400" /> Premium ($18.000)
                       </span>
-                      <span className="text-[10px] text-cyan-400 font-medium">
-                        Código Oficial de 6 Dígitos
-                      </span>
+                      <span className="text-[10px] text-cyan-400 font-medium">Clave Oficial</span>
                     </div>
-                    <div className="text-2xl font-black font-mono text-cyan-300">
+                    <div className="text-xl font-black font-mono text-cyan-300 tracking-widest">
                       {premiumKey}
                     </div>
                   </div>
-                  <div className="flex gap-2 pt-1">
+                  <div className="flex gap-2">
                     <button
                       type="button"
                       onClick={() => handleCopy(String(premiumKey), 'prem')}
-                      className="flex-1 py-2 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 active:scale-95 text-[11px] font-bold text-cyan-200 border border-cyan-500/30 flex items-center justify-center gap-1 cursor-pointer transition-all"
+                      className="flex-1 py-2 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 active:scale-95 text-[11px] font-bold text-cyan-200 border border-cyan-500/30 flex items-center justify-center gap-1 cursor-pointer transition-all touch-manipulation"
                     >
                       {copiedKey === 'prem' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                      <span>{copiedKey === 'prem' ? '¡Copiado!' : 'Copiar Clave'}</span>
+                      <span>{copiedKey === 'prem' ? '¡Copiado!' : 'Copiar'}</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => handleShareWhatsApp('Premium', premiumKey)}
-                      className="px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-[11px] font-bold text-white flex items-center justify-center gap-1 cursor-pointer transition-all"
+                      className="px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-[11px] font-bold text-white flex items-center justify-center gap-1 cursor-pointer transition-all touch-manipulation"
                       title="Enviar por WhatsApp"
                     >
                       <Share2 className="w-3.5 h-3.5" />
@@ -211,10 +220,18 @@ export const AdminKeyModal: React.FC<AdminKeyModalProps> = ({ isOpen, onClose })
                 </div>
               </div>
             ) : (
-              <div className="p-6 rounded-2xl bg-black/40 border border-dashed border-white/10 text-center text-xs text-gray-500">
-                Escribe el nombre del stand arriba para calcular su ID y claves al instante.
+              <div className="py-4 px-3 rounded-xl bg-black/40 border border-dashed border-white/10 text-center text-xs text-gray-400">
+                Escribe el nombre del stand arriba para ver sus claves oficiales.
               </div>
             )}
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-full mt-2 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-gray-400 hover:text-white text-xs font-semibold transition-all cursor-pointer touch-manipulation"
+            >
+              Cerrar
+            </button>
           </div>
         )}
       </div>
