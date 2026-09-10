@@ -23,17 +23,12 @@ import {
   Layers,
   HelpCircle,
   Key,
-  Download,
-  Share2,
-  PlusSquare,
   X,
   Menu,
   MessageCircle,
 } from 'lucide-react';
 import { PlanType } from '../types';
-import { PWAInstallBanner } from './PWAInstallBanner';
 import { AdminKeyModal } from './AdminKeyModal';
-import { usePWAInstall } from '../hooks/usePWAInstall';
 
 interface LandingPageProps {
   onOpenApp: (preferredPlan?: PlanType) => void;
@@ -46,12 +41,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   onOpenActivation,
   onOpenLicenseModal,
 }) => {
-  const { isInstallable, isInstalled, isIOS, install } = usePWAInstall();
-  const [showIOSModal, setShowIOSModal] = useState(false);
-
   // Mobile and Accordion states
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [cashSectionOpen, setCashSectionOpen] = useState(true);
+  const [cashSectionOpen, setCashSectionOpen] = useState(false);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [adminModalOpen, setAdminModalOpen] = useState(false);
   const [activeModule, setActiveModule] = useState<number>(0);
@@ -62,7 +54,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
     if (!el) return;
     const headerOffset = 70;
     const elementPosition = el.getBoundingClientRect().top;
-    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+    const offsetPosition = elementPosition + window.scrollY - headerOffset;
 
     try {
       window.scrollTo({
@@ -74,6 +66,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({
     }
   };
 
+  const openAndScrollToCash = () => {
+    setCashSectionOpen(true);
+    setTimeout(() => {
+      scrollToSection('efectivo');
+    }, 120);
+  };
+
   const handleMobileNav = (action: () => void) => {
     setMobileMenuOpen(false);
     setTimeout(() => {
@@ -81,25 +80,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
     }, 120);
   };
 
-  const handleInstallAppClick = async () => {
-    if (isInstallable) {
-      const success = await install();
-      if (success) {
-        onOpenApp();
-      }
-    } else if (isIOS) {
-      setShowIOSModal(true);
-    } else {
-      // If browser doesn't support deferred prompt or already running, open app directly
-      onOpenApp();
-    }
-  };
-
-  // Allow admin URL access (e.g. ?admin=2026 or ?darwin)
+  // Allow admin URL access (e.g. ?admin=2026 or ?organizador)
   useEffect(() => {
     try {
       const search = window.location.search.toLowerCase();
-      if (search.includes('admin') || search.includes('darwin')) {
+      if (search.includes('admin') || search.includes('darwin') || search.includes('organizador')) {
         setAdminModalOpen(true);
       }
     } catch {}
@@ -211,30 +196,36 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* Top Floating Navigation */}
       <header className="sticky top-0 z-30 w-full backdrop-blur-xl bg-[#050505]/90 border-b border-[#1f1f23] dark:bg-[#050505]/90 dark:border-[#1f1f23] light:bg-white/90 light:border-slate-200">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          {/* Logo & Darwin Admin Trigger (3 quick taps on mobile/desktop) */}
+          {/* Logo */}
           <div
             onClick={handleSecretAdminTrigger}
             className="flex items-center gap-2.5 cursor-pointer select-none active:scale-95 transition-transform"
-            title="Mi Feria (Toca 3 veces para panel de administración)"
+            title="Mi Feria — Punto de Venta Escolar"
           >
             <img src="/icon.svg" alt="Mi Feria Logo" className="w-8 h-8 rounded-xl shadow-md shadow-cyan-500/30" />
             <span className="font-extrabold text-lg tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-500">
               Mi Feria
             </span>
-            <span className="hidden sm:inline-block text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-mono font-medium">
-              v2.5 PWA
-            </span>
           </div>
 
           <div className="flex items-center gap-2">
-            <PWAInstallBanner compact />
+            {/* Quick Admin Access Button for Mobile and Desktop */}
+            <button
+              type="button"
+              onClick={() => setAdminModalOpen(true)}
+              className="p-2 sm:px-3 sm:py-2 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-gray-300 hover:text-cyan-400 border border-white/10 flex items-center gap-1.5 text-xs font-semibold transition-all cursor-pointer"
+              title="Acceso Organizador / Generador de Claves"
+            >
+              <Lock className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="hidden sm:inline">Admin</span>
+            </button>
 
             {/* Mobile 3-lines Hamburger Menu Button */}
             <button
               type="button"
               id="mobile-nav-toggle-btn"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 sm:hidden border border-white/10 transition-colors"
+              className="p-2.5 rounded-xl text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 sm:hidden border border-white/10 transition-colors cursor-pointer active:scale-95"
               aria-label="Abrir menú de navegación"
             >
               {mobileMenuOpen ? <X className="w-5 h-5 text-cyan-400" /> : <Menu className="w-5 h-5" />}
@@ -242,13 +233,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </div>
         </div>
 
-        {/* Mobile Slide-Down Quick Menu (Avoids long endless scrolling on phones) */}
+        {/* Mobile Slide-Down Quick Menu */}
         {mobileMenuOpen && (
-          <div className="sm:hidden border-b border-[#1f1f23] bg-[#0c0c10]/98 backdrop-blur-2xl px-4 py-4 space-y-1.5 animate-in slide-in-from-top-2 shadow-2xl">
+          <div className="sm:hidden border-b border-[#1f1f23] bg-[#0c0c10]/98 backdrop-blur-2xl px-4 py-4 space-y-2 animate-in slide-in-from-top-2 shadow-2xl">
             <button
               type="button"
               onClick={() => handleMobileNav(() => scrollToSection('precios'))}
-              className="w-full text-left p-3 rounded-xl hover:bg-white/5 text-xs font-bold text-gray-200 flex items-center gap-3 transition-colors cursor-pointer"
+              className="w-full text-left p-3.5 rounded-xl hover:bg-white/5 active:bg-white/10 text-xs font-bold text-gray-200 flex items-center gap-3 transition-colors cursor-pointer"
             >
               <DollarSign className="w-4 h-4 text-cyan-400" />
               <span>Ver Licencias y Precios ($10k y $18k)</span>
@@ -256,13 +247,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
             <button
               type="button"
-              onClick={() =>
-                handleMobileNav(() => {
-                  setCashSectionOpen(true);
-                  scrollToSection('efectivo');
-                })
-              }
-              className="w-full text-left p-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-xs font-bold text-emerald-300 flex items-center gap-3 transition-colors cursor-pointer"
+              onClick={() => handleMobileNav(() => openAndScrollToCash())}
+              className="w-full text-left p-3.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 active:bg-emerald-500/30 border border-emerald-500/20 text-xs font-bold text-emerald-300 flex items-center gap-3 transition-colors cursor-pointer"
             >
               <DollarSign className="w-4 h-4 text-emerald-400" />
               <span>Pagar en Efectivo en el Colegio</span>
@@ -271,7 +257,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <button
               type="button"
               onClick={() => handleMobileNav(() => onOpenActivation())}
-              className="w-full text-left p-3 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-xs font-black text-cyan-300 flex items-center gap-3 transition-colors cursor-pointer"
+              className="w-full text-left p-3.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 active:bg-cyan-500/35 border border-cyan-500/30 text-xs font-black text-cyan-300 flex items-center gap-3 transition-colors cursor-pointer"
             >
               <Key className="w-4 h-4 text-cyan-400" />
               <span>Activar mi Stand con Código</span>
@@ -279,17 +265,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
             <button
               type="button"
-              onClick={() => handleMobileNav(() => handleInstallAppClick())}
-              className="w-full text-left p-3 rounded-xl hover:bg-white/5 text-xs font-bold text-gray-200 flex items-center gap-3 transition-colors cursor-pointer"
-            >
-              <Smartphone className="w-4 h-4 text-cyan-400" />
-              <span>Instalar App en el Celular (PWA)</span>
-            </button>
-
-            <button
-              type="button"
               onClick={() => handleMobileNav(() => scrollToSection('modulos'))}
-              className="w-full text-left p-3 rounded-xl hover:bg-white/5 text-xs font-bold text-gray-200 flex items-center gap-3 transition-colors cursor-pointer"
+              className="w-full text-left p-3.5 rounded-xl hover:bg-white/5 active:bg-white/10 text-xs font-bold text-gray-200 flex items-center gap-3 transition-colors cursor-pointer"
             >
               <Layers className="w-4 h-4 text-cyan-400" />
               <span>Los 9 Módulos del Sistema</span>
@@ -298,10 +275,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <button
               type="button"
               onClick={() => handleMobileNav(() => scrollToSection('faqs'))}
-              className="w-full text-left p-3 rounded-xl hover:bg-white/5 text-xs font-bold text-gray-200 flex items-center gap-3 transition-colors cursor-pointer"
+              className="w-full text-left p-3.5 rounded-xl hover:bg-white/5 active:bg-white/10 text-xs font-bold text-gray-200 flex items-center gap-3 transition-colors cursor-pointer"
             >
               <HelpCircle className="w-4 h-4 text-cyan-400" />
               <span>Preguntas Frecuentes</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleMobileNav(() => setAdminModalOpen(true))}
+              className="w-full text-left p-3.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 active:bg-purple-500/30 border border-purple-500/30 text-xs font-bold text-purple-300 flex items-center gap-3 transition-colors cursor-pointer"
+            >
+              <Lock className="w-4 h-4 text-purple-400" />
+              <span>Acceso Organizador / Admin (Generar Claves)</span>
             </button>
           </div>
         )}
@@ -588,14 +574,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
               <button
                 type="button"
-                onClick={() => {
-                  setCashSectionOpen(true);
-                  scrollToSection('efectivo');
-                }}
+                onClick={() => openAndScrollToCash()}
                 className="w-full py-3.5 rounded-2xl bg-emerald-500/20 hover:bg-emerald-500/30 active:scale-95 border border-emerald-500/40 text-emerald-300 font-bold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-emerald-950/30"
               >
                 <DollarSign className="w-4 h-4 text-emerald-400" />
-                <span>Pagar $10.000 en Efectivo en el Colegio</span>
+                <span>Pagar en Efectivo ($10k)</span>
               </button>
             </div>
           </div>
@@ -679,14 +662,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
               <button
                 type="button"
-                onClick={() => {
-                  setCashSectionOpen(true);
-                  scrollToSection('efectivo');
-                }}
+                onClick={() => openAndScrollToCash()}
                 className="w-full py-3.5 rounded-2xl bg-emerald-500/25 hover:bg-emerald-500/35 active:scale-95 border-2 border-emerald-500/50 text-emerald-200 font-extrabold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/40 cursor-pointer"
               >
                 <DollarSign className="w-4 h-4 text-emerald-400" />
-                <span>Pagar $18.000 en Efectivo en el Colegio</span>
+                <span>Pagar en Efectivo ($18k)</span>
               </button>
             </div>
           </div>
@@ -697,173 +677,103 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           <button
             type="button"
             onClick={() => onOpenActivation()}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 hover:border-cyan-500/40 text-xs font-bold text-gray-200 hover:text-cyan-300 transition-all shadow-sm cursor-pointer"
+            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 hover:border-cyan-500/40 text-xs font-bold text-gray-200 hover:text-cyan-300 transition-all shadow-sm cursor-pointer"
           >
             <Key className="w-4 h-4 text-cyan-400" />
-            <span>¿Ya compraste tu clave por Wompi o pagaste en efectivo a Darwin? Activar mi Stand aquí →</span>
+            <span>¿Ya tienes tu clave? Activar mi Stand con Código aquí →</span>
           </button>
         </div>
 
-        {/* Sección Pagar en Efectivo (Permanente, destacada y 100% interactiva) */}
+        {/* Sección Pagar en Efectivo (Menú desplegable suave / Accordion) */}
         <div id="efectivo" className="mt-10 max-w-4xl mx-auto scroll-mt-24">
-          <div className="rounded-3xl border-2 border-emerald-500/40 bg-gradient-to-b from-[#091510] to-[#0a0a0d] p-6 sm:p-8 shadow-2xl shadow-emerald-950/50">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-emerald-500/20">
-              <div className="flex items-center gap-4">
-                <div className="p-3.5 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 shadow-inner">
-                  <DollarSign className="w-8 h-8" />
+          <div className="rounded-3xl border-2 border-emerald-500/40 bg-gradient-to-b from-[#091510] to-[#0a0a0d] overflow-hidden shadow-2xl shadow-emerald-950/50">
+            {/* Header Desplegable Suave */}
+            <button
+              type="button"
+              onClick={() => setCashSectionOpen(!cashSectionOpen)}
+              className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 hover:bg-emerald-500/5 active:bg-emerald-500/10 transition-colors cursor-pointer select-none touch-manipulation"
+              aria-expanded={cashSectionOpen}
+            >
+              <div className="flex items-center gap-3.5 sm:gap-4">
+                <div className="p-3 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 shrink-0 shadow-inner">
+                  <DollarSign className="w-6 h-6 sm:w-7 sm:h-7" />
                 </div>
                 <div>
                   <div className="inline-block px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-[10px] font-black uppercase tracking-wider mb-1">
                     Pago Directo en el Colegio
                   </div>
-                  <h3 className="text-lg sm:text-xl font-black text-white">
-                    Paga en Efectivo con Darwin (Colegio)
+                  <h3 className="text-base sm:text-xl font-black text-white">
+                    Pagar en Efectivo en el Colegio ($10k o $18k)
                   </h3>
                   <p className="text-xs text-emerald-100/70 mt-0.5">
-                    Sin comisiones bancarias ni tarjetas. Entrega el dinero en mano y recibe tu clave oficial de 6 dígitos.
+                    {cashSectionOpen ? 'Toca para contraer' : 'Toca para desplegar instrucciones y activación'}
                   </p>
                 </div>
               </div>
 
-              {/* Botón directo a WhatsApp Darwin */}
-              <button
-                type="button"
-                onClick={() => {
-                  const url = "https://wa.me/573218322388?text=" + encodeURIComponent("¡Hola Darwin! Quiero pagar mi licencia de Mi Feria en efectivo en el colegio. Mi stand es: ");
-                  window.open(url, '_blank', 'noopener,noreferrer') || (window.location.href = url);
-                }}
-                className="w-full sm:w-auto px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-black font-black text-xs tracking-wider uppercase transition-all shadow-lg shadow-emerald-500/30 flex items-center justify-center gap-2 shrink-0 cursor-pointer"
-              >
-                <MessageCircle className="w-4 h-4" />
-                <span>Contactar a Darwin</span>
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-6 text-xs text-gray-300">
-              {/* Pasos para el pago */}
-              <div className="p-4 rounded-2xl bg-black/40 border border-emerald-500/20 space-y-3">
-                <h4 className="font-bold text-sm text-emerald-300 flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                  Pasos para Pago en Efectivo:
-                </h4>
-                <ol className="list-decimal pl-4 space-y-2 text-gray-200 leading-relaxed font-medium">
-                  <li>
-                    Busca a <strong>Darwin</strong> en el colegio o contáctalo por WhatsApp al <span className="text-emerald-300 font-bold">+57 321 832 2388</span>.
-                  </li>
-                  <li>
-                    Entrega el valor de tu licencia: <strong>$10.000 COP</strong> (Estándar) o <strong>$18.000 COP</strong> (Premium).
-                  </li>
-                  <li>
-                    Indícale el nombre exacto de tu stand. Darwin generará tu <strong className="text-cyan-300">Código Oficial de 6 dígitos</strong>.
-                  </li>
-                  <li>
-                    Abre la aplicación en tu celular, haz clic en <strong>«Activar con mi Código»</strong>, escribe tu stand y la clave. ¡Listo para vender!
-                  </li>
-                </ol>
+              <div className="p-2 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 shrink-0">
+                {cashSectionOpen ? (
+                  <ChevronUp className="w-5 h-5 text-emerald-400" />
+                ) : (
+                  <ChevronDown className="w-5 h-5 text-emerald-400" />
+                )}
               </div>
+            </button>
 
-              {/* Instalación PWA */}
-              <div className="p-4 rounded-2xl bg-black/40 border border-white/10 space-y-3">
-                <h4 className="font-bold text-sm text-cyan-300 flex items-center gap-2">
-                  <Smartphone className="w-4 h-4 text-cyan-400" />
-                  Instalar en Celular (100% Offline):
-                </h4>
-                <ul className="space-y-2 text-gray-200 leading-relaxed">
-                  <li>
-                    <strong className="text-white">Android (Chrome):</strong> Abre el menú de 3 puntos y presiona <span className="text-cyan-300 font-semibold">«Instalar aplicación»</span> o «Añadir a la pantalla principal».
-                  </li>
-                  <li>
-                    <strong className="text-white">iPhone (Safari):</strong> Presiona el botón <span className="text-cyan-300 font-semibold">Compartir</span> (cuadro con flecha) y selecciona <span className="text-cyan-300 font-semibold">«Añadir a pantalla de inicio»</span>.
-                  </li>
-                  <li>
-                    La app queda guardada en tu teléfono como una aplicación nativa, lista para funcionar sin internet ni gastar saldo el día de la feria.
-                  </li>
-                </ul>
+            {/* Contenido desplegable suave */}
+            {cashSectionOpen && (
+              <div className="p-5 sm:p-8 pt-0 border-t border-emerald-500/20 animate-in fade-in slide-in-from-top-2 duration-300">
+                <p className="text-xs sm:text-sm text-emerald-100/80 mb-5 leading-relaxed pt-4">
+                  Sin comisiones bancarias ni tarjetas. Entrega el dinero en físico a la coordinación del evento y recibe tu código oficial de 6 dígitos.
+                </p>
+
+                {/* Pasos para el pago */}
+                <div className="p-4 sm:p-5 rounded-2xl bg-black/40 border border-emerald-500/20 space-y-3 mb-6">
+                  <h4 className="font-bold text-xs sm:text-sm text-emerald-300 flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                    Pasos para Pago en Efectivo:
+                  </h4>
+                  <ol className="list-decimal pl-4 space-y-2 text-xs sm:text-sm text-gray-200 leading-relaxed font-medium">
+                    <li>
+                      Acércate a la <strong>Coordinación del Evento</strong> en el colegio o comunícate vía WhatsApp al <span className="text-emerald-300 font-bold">+57 321 832 2388</span>.
+                    </li>
+                    <li>
+                      Entrega el valor de tu licencia: <strong>$10.000 COP</strong> (Estándar) o <strong>$18.000 COP</strong> (Premium).
+                    </li>
+                    <li>
+                      Indica el nombre exacto de tu stand. El organizador generará tu <strong className="text-cyan-300">Código Oficial de 6 dígitos</strong>.
+                    </li>
+                    <li>
+                      Presiona el botón <strong>«Activar Stand con Código (6 Dígitos)»</strong>, escribe tu stand y la clave para desbloquear el punto de venta.
+                    </li>
+                  </ol>
+                </div>
+
+                {/* Acciones: WhatsApp + Único Botón de Activación */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                  <a
+                    href="https://wa.me/573218322388?text=%C2%A1Hola!%20Quiero%20pagar%20mi%20licencia%20de%20Mi%20Feria%20en%20efectivo%20en%20el%20colegio.%20Mi%20stand%20es:%20"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-4 px-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-black font-black text-xs tracking-wider uppercase transition-all shadow-lg shadow-emerald-500/30 flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    <span>Coordinar Pago por WhatsApp</span>
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={() => onOpenActivation()}
+                    className="w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-500 hover:from-cyan-300 hover:to-blue-400 active:scale-95 text-black font-black text-xs tracking-wider uppercase transition-all shadow-xl shadow-cyan-500/25 flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <Key className="w-4 h-4" />
+                    <span>Activar Stand con Código (6 Dígitos)</span>
+                  </button>
+                </div>
               </div>
-            </div>
-
-            {/* Accesos de Acción Rápida en Efectivo */}
-            <div className="mt-6 pt-6 border-t border-emerald-500/20 grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={() => onOpenActivation()}
-                className="w-full p-4 rounded-2xl bg-cyan-400 hover:bg-cyan-300 active:scale-95 text-black font-black text-xs tracking-wider uppercase transition-all shadow-xl shadow-cyan-500/25 flex items-center justify-center gap-2.5 cursor-pointer"
-              >
-                <Key className="w-4 h-4" />
-                <span>¿Ya tienes tu clave? Activar mi Stand</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleInstallAppClick}
-                className="w-full p-4 rounded-2xl bg-white/10 hover:bg-white/20 active:scale-95 text-white font-bold text-xs tracking-wider uppercase transition-all border border-white/20 flex items-center justify-center gap-2.5 cursor-pointer"
-              >
-                <Download className="w-4 h-4 text-emerald-400" />
-                <span>{isInstalled ? 'Abrir Caja Registradora' : 'Descargar App al Celular'}</span>
-              </button>
-            </div>
+            )}
           </div>
         </div>
-
-        {/* Modal Guía para iPhone / Safari */}
-        {showIOSModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-in fade-in">
-            <div className="w-full max-w-sm rounded-3xl bg-[#0c0c10] border border-cyan-500/30 p-5 text-white shadow-2xl relative">
-              <button
-                type="button"
-                onClick={() => setShowIOSModal(false)}
-                className="absolute top-4 right-4 p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/10"
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-2xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400">
-                  <Smartphone className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-sm">Instalar en iPhone / iPad</h4>
-                  <p className="text-[11px] text-gray-400">Desde el navegador Safari</p>
-                </div>
-              </div>
-
-              <div className="space-y-2.5 text-xs text-gray-300">
-                <div className="flex items-start gap-3 p-3 rounded-2xl bg-white/5 border border-white/5">
-                  <div className="p-1.5 rounded-xl bg-blue-500/20 text-blue-400 mt-0.5">
-                    <Share2 className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span className="font-bold text-white block mb-0.5">Paso 1: Compartir</span>
-                    Toca el botón <strong className="text-cyan-300">Compartir</strong> (icono de cuadrado con flecha hacia arriba) en Safari.
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 p-3 rounded-2xl bg-white/5 border border-white/5">
-                  <div className="p-1.5 rounded-xl bg-emerald-500/20 text-emerald-400 mt-0.5">
-                    <PlusSquare className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span className="font-bold text-white block mb-0.5">Paso 2: Añadir a Inicio</span>
-                    Baja en las opciones y presiona <strong className="text-emerald-300">«Añadir a pantalla de inicio»</strong>.
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-4 flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowIOSModal(false);
-                    onOpenApp();
-                  }}
-                  className="flex-1 py-3 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-extrabold text-xs tracking-wider uppercase transition-all shadow-lg shadow-cyan-500/25 cursor-pointer"
-                >
-                  Abrir App Ahora
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Tabla Comparativa de Planes */}
         <div className="mt-16 max-w-4xl mx-auto overflow-hidden rounded-3xl border border-[#1f1f23] bg-[#0c0c0e]">
@@ -1006,23 +916,26 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             return (
               <div
                 key={idx}
-                className="rounded-2xl border border-[#1f1f23] bg-[#0c0c0e] overflow-hidden"
+                className="rounded-2xl border border-[#1f1f23] bg-[#0c0c0e] overflow-hidden transition-colors"
               >
                 <button
                   type="button"
-                  onClick={() => setActiveFaq(isOpen ? null : idx)}
-                  className="w-full p-4.5 text-left flex items-center justify-between gap-4 hover:bg-white/5 transition-colors"
+                  onClick={() => setActiveFaq((prev) => (prev === idx ? null : idx))}
+                  className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 hover:bg-white/5 active:bg-white/10 transition-colors cursor-pointer select-none touch-manipulation"
+                  aria-expanded={isOpen}
                 >
-                  <span className="font-semibold text-xs sm:text-sm text-white">{faq.q}</span>
-                  {isOpen ? (
-                    <ChevronUp className="w-4 h-4 text-cyan-400 shrink-0" />
-                  ) : (
-                    <ChevronDown className="w-4 h-4 text-gray-400 shrink-0" />
-                  )}
+                  <span className="font-semibold text-xs sm:text-sm text-white leading-snug">{faq.q}</span>
+                  <div className="p-1 rounded-lg bg-white/5 shrink-0">
+                    {isOpen ? (
+                      <ChevronUp className="w-4 h-4 text-cyan-400" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4 text-gray-400" />
+                    )}
+                  </div>
                 </button>
                 {isOpen && (
-                  <div className="p-4.5 pt-0 text-xs text-gray-300 leading-relaxed border-t border-white/5 animate-in fade-in">
-                    {faq.a}
+                  <div className="p-4 sm:p-5 pt-0 text-xs sm:text-sm text-gray-300 leading-relaxed border-t border-white/5 animate-in fade-in duration-200">
+                    <p className="pt-3">{faq.a}</p>
                   </div>
                 )}
               </div>
@@ -1032,14 +945,27 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       </section>
 
       {/* Footer Minimalista */}
-      <footer className="py-8 px-4 max-w-6xl mx-auto text-center text-xs text-gray-500 border-t border-white/5">
+      <footer className="py-8 px-4 max-w-6xl mx-auto text-center text-xs text-gray-500 border-t border-white/5 space-y-3">
         <div 
           onClick={handleSecretAdminTrigger}
           className="inline-flex items-center justify-center gap-2 cursor-pointer select-none"
           title="Mi Feria"
         >
           <img src="/icon.svg" alt="Mi Feria" className="w-5 h-5 rounded-md" />
-          <span className="font-semibold text-gray-400 hover:text-gray-300 transition-colors">Mi Feria © {new Date().getFullYear()}</span>
+          <span className="font-semibold text-gray-400 hover:text-gray-300 transition-colors">
+            Mi Feria © {new Date().getFullYear()} • Sistema de Gestión y Ventas
+          </span>
+        </div>
+
+        <div>
+          <button
+            type="button"
+            onClick={() => setAdminModalOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 active:scale-95 text-[11px] font-medium text-gray-400 hover:text-cyan-300 transition-all cursor-pointer"
+          >
+            <Lock className="w-3 h-3 text-cyan-400" />
+            <span>Acceso Administración / Organizador</span>
+          </button>
         </div>
       </footer>
 

@@ -10,25 +10,25 @@ export const WhatsAppSupport: React.FC = () => {
 
   const quickActions = [
     {
-      title: 'Pagar en Efectivo a Darwin',
-      desc: 'Coordina la entrega del dinero y recibe tu código físico',
+      title: 'Pagar en Efectivo en el Colegio',
+      desc: 'Coordina la entrega del dinero y recibe tu código oficial',
       icon: DollarSign,
       color: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
-      text: '¡Hola Darwin! Quiero pagar mi licencia de Mi Feria en efectivo en el colegio. Mi stand es: ',
+      text: '¡Hola! Quiero pagar mi licencia de Mi Feria en efectivo en el colegio. Mi stand es: ',
     },
     {
       title: 'Ayuda con Código de Activación',
       desc: 'Si ya pagaste por Wompi o efectivo y requieres tu clave',
       icon: Key,
       color: 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30',
-      text: '¡Hola Darwin! Ya realicé el pago pero necesito ayuda para activar mi stand. Mi nombre o stand es: ',
+      text: '¡Hola! Ya realicé el pago pero necesito ayuda para activar mi stand. Mi nombre o stand es: ',
     },
     {
       title: 'Consulta General o Técnica',
-      desc: 'Asistencia para el día del evento o uso offline',
+      desc: 'Asistencia para el día del evento o dudas contables',
       icon: HelpCircle,
       color: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
-      text: '¡Hola Darwin! Tengo una duda sobre el funcionamiento del sistema Mi Feria: ',
+      text: '¡Hola! Tengo una duda sobre el funcionamiento del sistema Mi Feria: ',
     },
   ];
 
@@ -51,7 +51,7 @@ export const WhatsAppSupport: React.FC = () => {
             </div>
             <div>
               <h4 className="text-xs font-black tracking-wide text-white flex items-center gap-1.5">
-                <span>Darwin — Soporte Oficial</span>
+                <span>Coordinación — Soporte Oficial</span>
               </h4>
               <span className="text-[10px] text-emerald-400 font-mono block">En línea por WhatsApp</span>
             </div>
@@ -105,14 +105,14 @@ export const WhatsAppSupport: React.FC = () => {
 
         {/* General Direct Button */}
         <a
-          href={getWhatsAppUrl('¡Hola Darwin! Necesito información sobre Mi Feria.')}
+          href={getWhatsAppUrl('¡Hola! Necesito información sobre Mi Feria.')}
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => setIsOpen(false)}
           className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black font-extrabold text-xs tracking-wider uppercase transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2"
         >
           <MessageCircle className="w-4 h-4" />
-          <span>Abrir Chat Libre (+57 321 832 2388)</span>
+          <span>Abrir Chat de Soporte Oficial</span>
         </a>
       </div>
 

@@ -1,235 +1,129 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
     <!-- Background Gradient -->
-    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0d1117"/>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b0f19"/>
       <stop offset="100%" stop-color="#030712"/>
     </linearGradient>
 
-    <!-- Calculator Body Titanium Gradient -->
-    <linearGradient id="calcCasing" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#2d3748"/>
-      <stop offset="40%" stop-color="#1a202c"/>
-      <stop offset="100%" stop-color="#111827"/>
+    <!-- Calculator Body Gradient -->
+    <linearGradient id="calcGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
     </linearGradient>
 
-    <!-- Classic LCD Screen (Authentic Digital Glass) -->
-    <linearGradient id="lcdScreen" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#94a3b8"/>
-      <stop offset="10%" stop-color="#cbd5e1"/>
-      <stop offset="100%" stop-color="#94a3b8"/>
+    <!-- Screen Glass Gradient -->
+    <linearGradient id="screenGlass" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#022c22"/>
+      <stop offset="100%" stop-color="#064e3b"/>
     </linearGradient>
 
-    <!-- Solar Cell Gradient -->
-    <linearGradient id="solarGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#451a03"/>
-      <stop offset="50%" stop-color="#78350f"/>
-      <stop offset="100%" stop-color="#451a03"/>
-    </linearGradient>
-
-    <!-- Authentic Calculator Key Gradients -->
-    <!-- Clear Key (AC - Iconic Vibrant Orange) -->
-    <linearGradient id="keyAC" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#ff7849"/>
-      <stop offset="100%" stop-color="#ea580c"/>
-    </linearGradient>
-
-    <!-- Operator Keys (Warm Amber / Yellow-Orange) -->
-    <linearGradient id="keyOp" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#fbbf24"/>
-      <stop offset="100%" stop-color="#d97706"/>
-    </linearGradient>
-
-    <!-- Numeric Keys (Classic Charcoal Dark Keys) -->
-    <linearGradient id="keyNum" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#374151"/>
-      <stop offset="100%" stop-color="#1f2937"/>
-    </linearGradient>
-
-    <!-- Equals Key (Vibrant Emerald / Cyan Action Key) -->
-    <linearGradient id="keyEq" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#10b981"/>
-      <stop offset="100%" stop-color="#059669"/>
-    </linearGradient>
-
-    <!-- Gold Coin Gradients -->
-    <radialGradient id="coinGold" cx="35%" cy="30%" r="70%">
-      <stop offset="0%" stop-color="#fffbeb"/>
-      <stop offset="25%" stop-color="#fef08a"/>
-      <stop offset="55%" stop-color="#f59e0b"/>
-      <stop offset="85%" stop-color="#b45309"/>
-      <stop offset="100%" stop-color="#78350f"/>
+    <!-- Golden Coin Radial -->
+    <radialGradient id="goldRadial" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="35%" stop-color="#f59e0b"/>
+      <stop offset="85%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#92400e"/>
     </radialGradient>
 
-    <linearGradient id="coinRim" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fef9c3"/>
-      <stop offset="50%" stop-color="#f59e0b"/>
-      <stop offset="100%" stop-color="#92400e"/>
-    </linearGradient>
-
-    <!-- Clean Soft Shadows -->
-    <filter id="calcShadow" x="-15%" y="-15%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#000000" flood-opacity="0.6"/>
-    </filter>
-
-    <filter id="coinShadow" x="-20%" y="-20%" width="150%" height="150%">
-      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#000000" flood-opacity="0.55"/>
-      <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#f59e0b" flood-opacity="0.25"/>
+    <!-- Soft Drop Shadow -->
+    <filter id="softDrop" x="-15%" y="-15%" width="135%" height="135%">
+      <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#000000" flood-opacity="0.5"/>
     </filter>
   </defs>
 
-  <!-- Canvas App Icon Base -->
-  <rect width="512" height="512" rx="120" fill="url(#bgGradient)"/>
-  <rect width="504" height="504" x="4" y="4" rx="116" fill="none" stroke="#475569" stroke-width="2" stroke-opacity="0.3"/>
+  <!-- Canvas App Icon Base Frame -->
+  <rect width="512" height="512" rx="116" fill="url(#bgGrad)"/>
+  <rect width="504" height="504" x="4" y="4" rx="112" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-opacity="0.25"/>
 
-  <!-- ================= AUTHENTIC MINIMALIST CALCULATOR ================= -->
-  <g filter="url(#calcShadow)">
-    <!-- Outer Bevel Base -->
-    <rect x="68" y="56" width="268" height="396" rx="36" fill="#111827"/>
-    <!-- Calculator Main Body -->
-    <rect x="70" y="58" width="264" height="392" rx="34" fill="url(#calcCasing)" stroke="#475569" stroke-width="3"/>
+  <!-- Subtle glow spots behind items -->
+  <circle cx="200" cy="240" r="130" fill="#0284c7" opacity="0.12"/>
+  <circle cx="360" cy="280" r="100" fill="#f59e0b" opacity="0.16"/>
+
+  <!-- ================= MINIMALIST CALCULATOR (Left/Center) ================= -->
+  <g filter="url(#softDrop)">
+    <!-- Calculator Body -->
+    <rect x="74" y="70" width="260" height="372" rx="36" fill="url(#calcGrad)" stroke="#38bdf8" stroke-width="4"/>
+
+    <!-- Screen Window (Clean Minimalist Display) -->
+    <rect x="98" y="98" width="212" height="74" rx="16" fill="url(#screenGlass)" stroke="#10b981" stroke-width="2.5"/>
     
-    <!-- Top Edge Highlight -->
-    <line x1="108" y1="62" x2="296" y2="62" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-opacity="0.5"/>
-
-    <!-- Solar Cell Panel Strip (Immediately Identifies it as a Real Calculator) -->
-    <rect x="220" y="78" width="94" height="20" rx="4" fill="url(#solarGrad)" stroke="#1e293b" stroke-width="1.5"/>
-    <!-- Solar cell divider lines -->
-    <line x1="243" y1="79" x2="243" y2="97" stroke="#92400e" stroke-width="1"/>
-    <line x1="267" y1="79" x2="267" y2="97" stroke="#92400e" stroke-width="1"/>
-    <line x1="290" y1="79" x2="290" y2="97" stroke="#92400e" stroke-width="1"/>
-
-    <!-- Brand / Model Micro Text -->
-    <text x="96" y="93" fill="#64748b" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="800" letter-spacing="1">
-      FERIA POS
+    <!-- Screen Value (Clean Bold Display, Highly Visible) -->
+    <text x="290" y="150" fill="#34d399" font-family="system-ui, -apple-system, BlinkMacSystemFont, monospace" font-size="34" font-weight="900" text-anchor="end" letter-spacing="2">
+      $ 0.00
     </text>
 
-    <!-- Calculator Display Screen (Classic Authentic Beveled Window) -->
-    <rect x="90" y="108" width="224" height="72" rx="12" fill="#0f172a" stroke="#334155" stroke-width="2"/>
-    <!-- LCD Surface -->
-    <rect x="94" y="112" width="216" height="64" rx="8" fill="url(#lcdScreen)"/>
-    
-    <!-- Subtle LCD Glare -->
-    <path d="M 94 114 L 310 114 L 260 176 L 94 176 Z" fill="#ffffff" opacity="0.08"/>
+    <!-- KEYPAD MATRIX: 4 Rows x 3 Columns (Minimalist, Bold, Scalable) -->
+    <!-- Row 1: Clear (Orange), Divide (Amber), Multiply (Amber) -->
+    <rect x="100" y="196" width="56" height="48" rx="14" fill="#ea580c"/>
+    <text x="128" y="228" fill="#ffffff" font-family="system-ui, sans-serif" font-size="22" font-weight="800" text-anchor="middle">C</text>
 
-    <!-- LCD Digital Digits (High Contrast Authentic LCD Readout) -->
-    <text x="296" y="158" fill="#090d16" font-family="'Courier New', Courier, monospace, monospace" font-size="36" font-weight="900" text-anchor="end" letter-spacing="2">
-      84.500
-    </text>
-    <text x="106" y="132" fill="#334155" font-family="system-ui, sans-serif" font-size="10" font-weight="900" letter-spacing="1">
-      $ COP
-    </text>
+    <rect x="176" y="196" width="56" height="48" rx="14" fill="#f59e0b"/>
+    <text x="204" y="228" fill="#451a03" font-family="system-ui, sans-serif" font-size="24" font-weight="900" text-anchor="middle">÷</text>
 
-    <!-- KEYPAD MATRIX (5 Rows x 4 Columns) -->
-    <!-- Row 1: AC, +/-, %, ÷ -->
-    <!-- AC Button (Vibrant Orange - Classic Calculator AC) -->
-    <rect x="92" y="196" width="48" height="38" rx="10" fill="url(#keyAC)"/>
-    <text x="116" y="222" fill="#ffffff" font-family="system-ui, sans-serif" font-size="16" font-weight="900" text-anchor="middle">AC</text>
+    <rect x="252" y="196" width="56" height="48" rx="14" fill="#f59e0b"/>
+    <text x="280" y="228" fill="#451a03" font-family="system-ui, sans-serif" font-size="24" font-weight="900" text-anchor="middle">×</text>
 
-    <!-- +/- Button -->
-    <rect x="148" y="196" width="48" height="38" rx="10" fill="url(#keyNum)"/>
-    <text x="172" y="221" fill="#e2e8f0" font-family="system-ui, sans-serif" font-size="16" font-weight="700" text-anchor="middle">±</text>
+    <!-- Row 2: 7, 8, Minus (Amber) -->
+    <rect x="100" y="258" width="56" height="48" rx="14" fill="#334155"/>
+    <text x="128" y="290" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="22" font-weight="700" text-anchor="middle">7</text>
 
-    <!-- % Button -->
-    <rect x="204" y="196" width="48" height="38" rx="10" fill="url(#keyNum)"/>
-    <text x="228" y="221" fill="#e2e8f0" font-family="system-ui, sans-serif" font-size="16" font-weight="700" text-anchor="middle">%</text>
+    <rect x="176" y="258" width="56" height="48" rx="14" fill="#334155"/>
+    <text x="204" y="290" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="22" font-weight="700" text-anchor="middle">8</text>
 
-    <!-- ÷ Button (Amber Operator) -->
-    <rect x="260" y="196" width="48" height="38" rx="10" fill="url(#keyOp)"/>
-    <text x="284" y="222" fill="#451a03" font-family="system-ui, sans-serif" font-size="20" font-weight="900" text-anchor="middle">÷</text>
+    <rect x="252" y="258" width="56" height="48" rx="14" fill="#f59e0b"/>
+    <text x="280" y="290" fill="#451a03" font-family="system-ui, sans-serif" font-size="26" font-weight="900" text-anchor="middle">−</text>
 
-    <!-- Row 2: 7, 8, 9, × -->
-    <rect x="92" y="244" width="48" height="38" rx="10" fill="url(#keyNum)"/>
-    <text x="116" y="269" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="18" font-weight="700" text-anchor="middle">7</text>
+    <!-- Row 3: 4, 5, Plus (Amber) -->
+    <rect x="100" y="320" width="56" height="48" rx="14" fill="#334155"/>
+    <text x="128" y="352" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="22" font-weight="700" text-anchor="middle">4</text>
 
-    <rect x="148" y="244" width="48" height="38" rx="10" fill="url(#keyNum)"/>
-    <text x="172" y="269" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="18" font-weight="700" text-anchor="middle">8</text>
+    <rect x="176" y="320" width="56" height="48" rx="14" fill="#334155"/>
+    <text x="204" y="352" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="22" font-weight="700" text-anchor="middle">5</text>
 
-    <rect x="204" y="244" width="48" height="38" rx="10" fill="url(#keyNum)"/>
-    <text x="228" y="269" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="18" font-weight="700" text-anchor="middle">9</text>
+    <rect x="252" y="320" width="56" height="48" rx="14" fill="#f59e0b"/>
+    <text x="280" y="352" fill="#451a03" font-family="system-ui, sans-serif" font-size="24" font-weight="900" text-anchor="middle">+</text>
 
-    <!-- × Button (Amber Operator) -->
-    <rect x="260" y="244" width="48" height="38" rx="10" fill="url(#keyOp)"/>
-    <text x="284" y="270" fill="#451a03" font-family="system-ui, sans-serif" font-size="20" font-weight="900" text-anchor="middle">×</text>
+    <!-- Row 4: 1, 2, Equals (Emerald Action Key) -->
+    <rect x="100" y="382" width="56" height="48" rx="14" fill="#334155"/>
+    <text x="128" y="414" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="22" font-weight="700" text-anchor="middle">1</text>
 
-    <!-- Row 3: 4, 5, 6, − -->
-    <rect x="92" y="292" width="48" height="38" rx="10" fill="url(#keyNum)"/>
-    <text x="116" y="317" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="18" font-weight="700" text-anchor="middle">4</text>
+    <rect x="176" y="382" width="56" height="48" rx="14" fill="#334155"/>
+    <text x="204" y="414" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="22" font-weight="700" text-anchor="middle">2</text>
 
-    <rect x="148" y="292" width="48" height="38" rx="10" fill="url(#keyNum)"/>
-    <text x="172" y="317" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="18" font-weight="700" text-anchor="middle">5</text>
-
-    <rect x="204" y="292" width="48" height="38" rx="10" fill="url(#keyNum)"/>
-    <text x="228" y="317" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="18" font-weight="700" text-anchor="middle">6</text>
-
-    <!-- − Button (Amber Operator) -->
-    <rect x="260" y="292" width="48" height="38" rx="10" fill="url(#keyOp)"/>
-    <text x="284" y="317" fill="#451a03" font-family="system-ui, sans-serif" font-size="22" font-weight="900" text-anchor="middle">−</text>
-
-    <!-- Row 4: 1, 2, 3, + -->
-    <rect x="92" y="340" width="48" height="38" rx="10" fill="url(#keyNum)"/>
-    <text x="116" y="365" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="18" font-weight="700" text-anchor="middle">1</text>
-
-    <rect x="148" y="340" width="48" height="38" rx="10" fill="url(#keyNum)"/>
-    <text x="172" y="365" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="18" font-weight="700" text-anchor="middle">2</text>
-
-    <rect x="204" y="340" width="48" height="38" rx="10" fill="url(#keyNum)"/>
-    <text x="228" y="365" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="18" font-weight="700" text-anchor="middle">3</text>
-
-    <!-- + Button (Amber Operator) -->
-    <rect x="260" y="340" width="48" height="38" rx="10" fill="url(#keyOp)"/>
-    <text x="284" y="366" fill="#451a03" font-family="system-ui, sans-serif" font-size="22" font-weight="900" text-anchor="middle">+</text>
-
-    <!-- Row 5: 0, ., = -->
-    <!-- 0 Key (Double Width) -->
-    <rect x="92" y="388" width="104" height="38" rx="10" fill="url(#keyNum)"/>
-    <text x="144" y="413" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="18" font-weight="700" text-anchor="middle">0</text>
-
-    <!-- . Key -->
-    <rect x="204" y="388" width="48" height="38" rx="10" fill="url(#keyNum)"/>
-    <circle cx="228" cy="410" r="3.5" fill="#f8fafc"/>
-
-    <!-- = Key (Vibrant Action Key) -->
-    <rect x="260" y="388" width="48" height="38" rx="10" fill="url(#keyEq)"/>
-    <text x="284" y="414" fill="#ffffff" font-family="system-ui, sans-serif" font-size="22" font-weight="900" text-anchor="middle">=</text>
+    <rect x="252" y="382" width="56" height="48" rx="14" fill="#10b981"/>
+    <text x="280" y="414" fill="#ffffff" font-family="system-ui, sans-serif" font-size="26" font-weight="900" text-anchor="middle">=</text>
   </g>
 
-  <!-- ================= UNMISTAKABLE GOLDEN COIN ================= -->
-  <g filter="url(#coinShadow)">
-    <!-- 3D Coin Ridge / Rim Depth -->
-    <ellipse cx="380" cy="276" rx="94" ry="94" fill="#78350f"/>
-    <ellipse cx="376" cy="272" rx="94" ry="94" fill="url(#coinRim)"/>
+  <!-- ================= MINIMALIST GOLDEN COIN (Right Side) ================= -->
+  <g filter="url(#softDrop)">
+    <!-- Outer Edge Depth -->
+    <circle cx="376" cy="276" r="92" fill="#78350f"/>
+    <!-- Coin Face -->
+    <circle cx="372" cy="270" r="90" fill="url(#goldRadial)" stroke="#fef08a" stroke-width="4"/>
 
-    <!-- Coin Face Surface -->
-    <circle cx="374" cy="266" r="88" fill="url(#coinGold)" stroke="#fef08a" stroke-width="4"/>
+    <!-- Inner Groove Ring -->
+    <circle cx="372" cy="270" r="74" fill="none" stroke="#ca8a04" stroke-width="3" stroke-dasharray="8 6"/>
 
-    <!-- Inner Concentric Grooved Border -->
-    <circle cx="374" cy="266" r="72" fill="none" stroke="#ca8a04" stroke-width="3" stroke-dasharray="8 5"/>
-    <circle cx="374" cy="266" r="77" fill="none" stroke="#fef9c3" stroke-width="1.5" opacity="0.7"/>
+    <!-- Embossed Dollar Sign ($) -->
+    <!-- Vertical Bars -->
+    <line x1="372" y1="210" x2="372" y2="330" stroke="#78350f" stroke-width="14" stroke-linecap="round"/>
+    <line x1="372" y1="210" x2="372" y2="330" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/>
 
-    <!-- Prominent Embossed Dollar Sign ($) -->
-    <!-- Shadow for 3D Relief -->
-    <line x1="374" y1="208" x2="374" y2="324" stroke="#78350f" stroke-width="16" stroke-linecap="round"/>
-    <!-- Sharp Core Bar -->
-    <line x1="374" y1="208" x2="374" y2="324" stroke="#ffffff" stroke-width="10" stroke-linecap="round"/>
-
-    <!-- S Curve Shadow -->
-    <path d="M 404 234 C 404 216 392 210 374 210 C 352 210 342 222 342 238 C 342 262 404 258 404 288 C 404 310 388 322 374 322 C 352 322 340 308 340 290"
+    <!-- S Curve Outline Shadow -->
+    <path d="M 398 238 C 398 222 386 216 372 216 C 352 216 342 226 342 242 C 342 264 398 260 398 288 C 398 308 384 318 372 318 C 352 318 340 306 340 290"
           fill="none"
           stroke="#78350f"
-          stroke-width="20"
+          stroke-width="18"
           stroke-linecap="round"
           stroke-linejoin="round"/>
 
-    <!-- S Curve Pure White Foreground -->
-    <path d="M 404 234 C 404 216 392 210 374 210 C 352 210 342 222 342 238 C 342 262 404 258 404 288 C 404 310 388 322 374 322 C 352 322 340 308 340 290"
+    <!-- S Curve White Clean Core -->
+    <path d="M 398 238 C 398 222 386 216 372 216 C 352 216 342 226 342 242 C 342 264 398 260 398 288 C 398 308 384 318 372 318 C 352 318 340 306 340 290"
           fill="none"
           stroke="#ffffff"
-          stroke-width="12"
+          stroke-width="10"
           stroke-linecap="round"
           stroke-linejoin="round"/>
-
-    <!-- Sparkle Highlight -->
-    <path d="M 334 212 Q 338 204 346 202 Q 338 200 334 192 Q 330 200 322 202 Q 330 204 334 212 Z" fill="#ffffff"/>
   </g>
 </svg>

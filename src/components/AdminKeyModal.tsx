@@ -55,12 +55,13 @@ export const AdminKeyModal: React.FC<AdminKeyModalProps> = ({ isOpen, onClose })
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-in fade-in">
-      <div className="w-full max-w-md rounded-3xl bg-[#0c0c0e] border border-cyan-500/40 p-6 text-white shadow-2xl relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-3 sm:p-4 animate-in fade-in overflow-y-auto">
+      <div className="w-full max-w-md my-auto max-h-[92vh] overflow-y-auto rounded-3xl bg-[#0c0c0e] border border-cyan-500/40 p-5 sm:p-6 text-white shadow-2xl relative">
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-5 right-5 p-1.5 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white"
+          className="absolute top-4 right-4 p-2 rounded-full bg-white/5 hover:bg-white/10 active:scale-95 text-gray-400 hover:text-white transition-all cursor-pointer"
+          aria-label="Cerrar modal"
         >
           <X className="w-5 h-5" />
         </button>
@@ -71,10 +72,10 @@ export const AdminKeyModal: React.FC<AdminKeyModalProps> = ({ isOpen, onClose })
               <Lock className="w-6 h-6" />
             </div>
             <h3 className="text-lg font-black uppercase tracking-tight">
-              Acceso Administrador Darwin
+              Acceso Organizador / Admin
             </h3>
-            <p className="text-xs text-gray-400 max-w-xs mx-auto">
-              Herramienta exclusiva para generar claves instantáneas a estudiantes que pagan en efectivo.
+            <p className="text-xs text-gray-400 max-w-xs mx-auto leading-relaxed">
+              Herramienta exclusiva de la coordinación para generar claves instantáneas a stands que pagan en efectivo en el colegio.
             </p>
 
             <div className="max-w-xs mx-auto">
@@ -84,11 +85,11 @@ export const AdminKeyModal: React.FC<AdminKeyModalProps> = ({ isOpen, onClose })
                 autoFocus
                 value={pinInput}
                 onChange={(e) => setPinInput(e.target.value)}
-                placeholder="Ingresa tu PIN de seguridad"
+                placeholder="Ingresa PIN de seguridad"
                 className="w-full px-4 py-3 rounded-xl bg-black/80 border border-white/20 text-center font-mono text-lg font-bold text-cyan-300 focus:outline-none focus:border-cyan-400"
               />
               {pinError && (
-                <span className="text-[11px] text-rose-400 mt-1 block font-medium">
+                <span className="text-[11px] text-rose-400 mt-1.5 block font-medium">
                   {pinError}
                 </span>
               )}
@@ -96,14 +97,14 @@ export const AdminKeyModal: React.FC<AdminKeyModalProps> = ({ isOpen, onClose })
 
             <button
               type="submit"
-              className="w-full max-w-xs mx-auto py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-black uppercase tracking-wider text-xs shadow-lg shadow-cyan-500/20"
+              className="w-full max-w-xs mx-auto py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 active:scale-95 text-black font-black uppercase tracking-wider text-xs shadow-lg shadow-cyan-500/20 transition-all cursor-pointer"
             >
               Ingresar al Generador
             </button>
           </form>
         ) : (
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               <div className="w-9 h-9 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
                 <ShieldCheck className="w-5 h-5" />
               </div>
@@ -117,7 +118,7 @@ export const AdminKeyModal: React.FC<AdminKeyModalProps> = ({ isOpen, onClose })
 
             <div>
               <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">
-                Nombre del Stand que te pagó en efectivo
+                Nombre del Stand que pagó en efectivo
               </label>
               <input
                 type="text"
@@ -125,7 +126,7 @@ export const AdminKeyModal: React.FC<AdminKeyModalProps> = ({ isOpen, onClose })
                 value={standName}
                 onChange={(e) => setStandName(e.target.value.toUpperCase())}
                 placeholder="EJ: STAND DELICIAS"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-black/70 border border-white/15 text-sm font-bold uppercase text-white focus:outline-none focus:border-cyan-400"
+                className="w-full px-3.5 py-3 rounded-xl bg-black/70 border border-white/15 text-sm font-bold uppercase text-white focus:outline-none focus:border-cyan-400"
               />
             </div>
 
@@ -156,7 +157,7 @@ export const AdminKeyModal: React.FC<AdminKeyModalProps> = ({ isOpen, onClose })
                     <button
                       type="button"
                       onClick={() => handleCopy(String(standardKey), 'std')}
-                      className="flex-1 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-[11px] font-bold text-white flex items-center justify-center gap-1"
+                      className="flex-1 py-2 rounded-lg bg-white/10 hover:bg-white/20 active:scale-95 text-[11px] font-bold text-white flex items-center justify-center gap-1 cursor-pointer transition-all"
                     >
                       {copiedKey === 'std' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                       <span>{copiedKey === 'std' ? '¡Copiado!' : 'Copiar Clave'}</span>
@@ -164,7 +165,7 @@ export const AdminKeyModal: React.FC<AdminKeyModalProps> = ({ isOpen, onClose })
                     <button
                       type="button"
                       onClick={() => handleShareWhatsApp('Estándar', standardKey)}
-                      className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-[11px] font-bold text-white flex items-center justify-center gap-1"
+                      className="px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-[11px] font-bold text-white flex items-center justify-center gap-1 cursor-pointer transition-all"
                       title="Enviar por WhatsApp"
                     >
                       <Share2 className="w-3.5 h-3.5" />
@@ -192,7 +193,7 @@ export const AdminKeyModal: React.FC<AdminKeyModalProps> = ({ isOpen, onClose })
                     <button
                       type="button"
                       onClick={() => handleCopy(String(premiumKey), 'prem')}
-                      className="flex-1 py-1.5 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-[11px] font-bold text-cyan-200 border border-cyan-500/30 flex items-center justify-center gap-1"
+                      className="flex-1 py-2 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 active:scale-95 text-[11px] font-bold text-cyan-200 border border-cyan-500/30 flex items-center justify-center gap-1 cursor-pointer transition-all"
                     >
                       {copiedKey === 'prem' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                       <span>{copiedKey === 'prem' ? '¡Copiado!' : 'Copiar Clave'}</span>
@@ -200,7 +201,7 @@ export const AdminKeyModal: React.FC<AdminKeyModalProps> = ({ isOpen, onClose })
                     <button
                       type="button"
                       onClick={() => handleShareWhatsApp('Premium', premiumKey)}
-                      className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-[11px] font-bold text-white flex items-center justify-center gap-1"
+                      className="px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-[11px] font-bold text-white flex items-center justify-center gap-1 cursor-pointer transition-all"
                       title="Enviar por WhatsApp"
                     >
                       <Share2 className="w-3.5 h-3.5" />
