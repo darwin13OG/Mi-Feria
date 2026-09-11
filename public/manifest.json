@@ -1,9 +1,9 @@
 {
-  "id": "/",
-  "name": "Mi Feria - Control ROI y POS",
-  "short_name": "Mi Feria",
+  "id": "/?app=pos",
+  "name": "Mi Feria - Control de Caja POS",
+  "short_name": "Mi Feria POS",
   "description": "Sistema POS ultra-rápido y balance financiero en vivo para ferias escolares y proyectos de emprendimiento.",
-  "start_url": "/",
+  "start_url": "/?app=pos",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",

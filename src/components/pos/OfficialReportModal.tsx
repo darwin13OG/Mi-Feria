@@ -61,33 +61,33 @@ export const OfficialReportModal: React.FC<OfficialReportModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-3 sm:p-5 overflow-y-auto animate-in fade-in">
-      <div className="w-full max-w-2xl max-h-[92vh] flex flex-col rounded-3xl bg-[#0c0c0e] border border-cyan-500/40 text-white shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 dark:bg-black/90 backdrop-blur-md p-3 sm:p-5 overflow-y-auto animate-in fade-in">
+      <div className="w-full max-w-2xl max-h-[92vh] flex flex-col rounded-3xl bg-white dark:bg-[#0c0c0e] border border-slate-200 dark:border-cyan-500/40 text-slate-900 dark:text-white shadow-2xl overflow-hidden">
         {/* Modal Top Bar (Hidden in Print) */}
-        <div className="p-4 border-b border-white/10 flex items-center justify-between shrink-0 bg-[#121218] no-print">
+        <div className="p-4 border-b border-slate-200 dark:border-white/10 flex items-center justify-between shrink-0 bg-slate-50 dark:bg-[#121218] no-print">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-cyan-500/20 text-cyan-400">
+            <div className="p-2 rounded-xl bg-cyan-100 text-cyan-700 dark:bg-cyan-500/20 dark:text-cyan-400">
               <FileText className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider block">
+              <span className="text-[10px] font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider block">
                 {isPremium ? 'Acta de Cierre Oficial (Premium)' : 'Reporte de Balance (Estándar)'}
               </span>
-              <h3 className="text-base font-black">
+              <h3 className="text-base font-black text-slate-900 dark:text-white">
                 {isPremium ? 'Acta Ejecutiva de Calificación' : 'Resumen Financiero del Stand'}
               </h3>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white"
+            className="p-1.5 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-slate-500 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Printable / Viewable Body */}
-        <div className="p-5 sm:p-7 overflow-y-auto space-y-6 text-slate-100 bg-white text-slate-900 dark:bg-[#0c0c0e] dark:text-slate-100 print:text-black print:bg-white print:p-0">
+        <div className="p-5 sm:p-7 overflow-y-auto space-y-6 bg-white dark:bg-[#0c0c0e] text-slate-900 dark:text-slate-100 print:text-black print:bg-white print:p-0">
           {/* Official Document Header */}
           <div className="border-b-2 border-slate-300 dark:border-cyan-500/30 print:border-black pb-4 text-center sm:text-left sm:flex sm:items-center sm:justify-between">
             <div>
@@ -279,8 +279,8 @@ export const OfficialReportModal: React.FC<OfficialReportModalProps> = ({
         </div>
 
         {/* Modal Actions Footer (Hidden in Print) */}
-        <div className="p-4 border-t border-white/10 bg-[#121218] flex flex-wrap items-center justify-between gap-3 shrink-0 no-print">
-          <div className="text-[11px] text-gray-400">
+        <div className="p-4 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#121218] flex flex-wrap items-center justify-between gap-3 shrink-0 no-print">
+          <div className="text-[11px] text-slate-500 dark:text-gray-400">
             {isPremium ? 'Listo para imprimir o guardar como PDF' : 'Versión Estándar: Descarga en texto plano'}
           </div>
 
@@ -288,7 +288,7 @@ export const OfficialReportModal: React.FC<OfficialReportModalProps> = ({
             <button
               type="button"
               onClick={handleDownloadTxt}
-              className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold text-white flex items-center gap-1.5 transition-all"
+              className="px-3.5 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-900 dark:bg-white/10 dark:hover:bg-white/20 dark:text-white text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
             >
               <Download className="w-4 h-4" />
               <span>Descargar .TXT</span>
@@ -298,7 +298,7 @@ export const OfficialReportModal: React.FC<OfficialReportModalProps> = ({
               <button
                 type="button"
                 onClick={handlePrint}
-                className="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-cyan-500/20 flex items-center gap-1.5 transition-all active:scale-95"
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-cyan-500/20 flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
               >
                 <Printer className="w-4 h-4" />
                 <span>Imprimir / Guardar PDF</span>

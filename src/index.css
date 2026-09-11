@@ -59,37 +59,85 @@ html:not(.dark) .pos-theme-input {
 
 /* Light mode high-contrast text and border overrides */
 html:not(.dark) .pos-theme-shell .text-gray-400,
-html:not(.dark) .pos-theme-shell .text-slate-400 {
+html:not(.dark) .pos-theme-shell .text-slate-400,
+html:not(.dark) .text-gray-400 {
   color: #475569 !important;
 }
 
 html:not(.dark) .pos-theme-shell .text-gray-500,
-html:not(.dark) .pos-theme-shell .text-slate-500 {
+html:not(.dark) .pos-theme-shell .text-slate-500,
+html:not(.dark) .text-gray-500 {
   color: #334155 !important;
 }
 
 html:not(.dark) .pos-theme-shell .text-gray-300,
-html:not(.dark) .pos-theme-shell .text-slate-300 {
+html:not(.dark) .pos-theme-shell .text-slate-300,
+html:not(.dark) .text-gray-300 {
   color: #1e293b !important;
 }
 
-html:not(.dark) .pos-theme-shell .text-white {
+html:not(.dark) .pos-theme-shell .text-white,
+html:not(.dark) .pos-theme-card .text-white {
   color: #0f172a !important;
 }
 
-html:not(.dark) .pos-theme-shell .bg-black\/60,
-html:not(.dark) .pos-theme-shell .bg-black\/50,
-html:not(.dark) .pos-theme-shell .bg-black\/70,
-html:not(.dark) .pos-theme-shell .bg-black\/40 {
+/* All dark backgrounds within pos-theme elements or modals adapt to clean solid colors in light mode */
+html:not(.dark) .bg-\[\#0c0c0e\],
+html:not(.dark) .bg-\[\#050505\],
+html:not(.dark) .bg-\[\#121218\],
+html:not(.dark) .bg-\[\#0b0b0b\],
+html:not(.dark) .bg-\[\#141417\],
+html:not(.dark) .bg-zinc-900\/90 {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+html:not(.dark) .bg-black\/60,
+html:not(.dark) .bg-black\/50,
+html:not(.dark) .bg-black\/70,
+html:not(.dark) .bg-black\/40 {
   background-color: #f1f5f9 !important;
 }
 
-html:not(.dark) .pos-theme-shell .border-white\/10,
-html:not(.dark) .pos-theme-shell .border-white\/5,
-html:not(.dark) .pos-theme-shell .border-white\/15,
-html:not(.dark) .pos-theme-shell .border-white\/20,
-html:not(.dark) .pos-theme-shell .border-\[\#1f1f23\] {
+html:not(.dark) .border-white\/10,
+html:not(.dark) .border-white\/5,
+html:not(.dark) .border-white\/15,
+html:not(.dark) .border-white\/20,
+html:not(.dark) .border-\[\#1f1f23\] {
   border-color: #cbd5e1 !important;
+}
+
+/* Elements that were transparent light in dark mode acquire rich solid colors and borders in light mode */
+html:not(.dark) .bg-cyan-500\/10,
+html:not(.dark) .bg-cyan-500\/15,
+html:not(.dark) .bg-cyan-500\/20 {
+  background-color: #e0f2fe !important;
+  border-color: #7dd3fc !important;
+  color: #0369a1 !important;
+}
+
+html:not(.dark) .bg-amber-500\/10,
+html:not(.dark) .bg-amber-500\/15,
+html:not(.dark) .bg-amber-500\/20 {
+  background-color: #fef3c7 !important;
+  border-color: #fcd34d !important;
+  color: #92400e !important;
+}
+
+html:not(.dark) .bg-emerald-500\/10,
+html:not(.dark) .bg-emerald-500\/15,
+html:not(.dark) .bg-emerald-500\/20 {
+  background-color: #d1fae5 !important;
+  border-color: #6ee7b7 !important;
+  color: #065f46 !important;
+}
+
+html:not(.dark) .bg-rose-500\/10,
+html:not(.dark) .bg-rose-500\/15,
+html:not(.dark) .bg-rose-500\/20 {
+  background-color: #ffe4e6 !important;
+  border-color: #fda4af !important;
+  color: #9f1239 !important;
 }
 
 html:not(.dark) .pos-theme-shell button.bg-cyan-500,

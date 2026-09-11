@@ -70,6 +70,13 @@ export const POSApp: React.FC<POSAppProps> = ({ onBackToLanding, onOpenLicenseMo
     state.config.initialInvestment ? formatNumberMask(state.config.initialInvestment) : ''
   );
 
+  const isPWA = typeof window !== 'undefined' && (
+    window.matchMedia('(display-mode: standalone)').matches ||
+    (window.navigator as unknown as { standalone?: boolean }).standalone === true ||
+    new URLSearchParams(window.location.search).get('app') === 'pos' ||
+    new URLSearchParams(window.location.search).get('view') === 'pos'
+  );
+
   const toggleAudio = () => {
     const next = !soundMuted;
     setSoundMuted(next);
@@ -328,57 +335,49 @@ export const POSApp: React.FC<POSAppProps> = ({ onBackToLanding, onOpenLicenseMo
       {/* Mobile Shell (< 480px, compact and clean) */}
       <div className="w-full sm:max-w-[460px] min-h-screen sm:min-h-[94vh] flex flex-col pos-theme-shell bg-[#050505] sm:rounded-[36px] sm:border sm:border-[#1f1f23] sm:shadow-2xl overflow-hidden relative transition-colors">
         {/* COMPACT APP HEADER */}
-        <header className="p-3 border-b border-[#1f1f23] pos-theme-header bg-[#0c0c0e]/95 backdrop-blur-md sticky top-0 z-20 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
+        <header className="p-2.5 sm:p-3 border-b border-slate-200 dark:border-[#1f1f23] pos-theme-header bg-white/95 dark:bg-[#0c0c0e]/95 backdrop-blur-md sticky top-0 z-20 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
             {/* Dynamic Plan Logo: Gold for Premium, Blue for Standard */}
             <img
               src={isPremium ? '/logo-premium.png' : '/logo-standard.png'}
               alt={isPremium ? 'Mi Feria Premium' : 'Mi Feria Estándar'}
-              className={`w-9 h-9 rounded-xl object-contain p-0.5 border shadow-md shrink-0 ${
+              className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl object-contain p-0.5 border shadow-sm shrink-0 ${
                 isPremium
-                  ? 'border-amber-500/40 bg-[#0c0903] shadow-amber-500/20'
-                  : 'border-cyan-500/40 bg-[#040812] shadow-cyan-500/20'
+                  ? 'border-amber-400/50 bg-amber-50 dark:bg-[#0c0903] shadow-amber-500/20'
+                  : 'border-cyan-400/50 bg-cyan-50 dark:bg-[#040812] shadow-cyan-500/20'
               }`}
             />
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="font-black text-sm pos-theme-text-title text-white tracking-tight">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span className="font-black text-xs sm:text-sm pos-theme-text-title text-slate-900 dark:text-white tracking-tight truncate max-w-[130px] sm:max-w-[180px]">
                   {state.config.projectName || 'Mi Stand'}
                 </span>
                 <span
-                  className={`text-[9px] px-1.5 py-0.5 rounded font-black uppercase tracking-wider border ${
+                  className={`text-[9px] px-1.5 py-0.5 rounded font-black uppercase tracking-wider shrink-0 border ${
                     isPremium
-                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                      : 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
+                      ? 'bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/40'
+                      : 'bg-cyan-100 text-cyan-800 border-cyan-300 dark:bg-cyan-500/20 dark:text-cyan-300 dark:border-cyan-500/40'
                   }`}
                 >
                   {isPremium ? 'Premium' : 'Estándar'}
                 </span>
               </div>
-              <span className="text-[10px] pos-theme-text-muted text-gray-400 block truncate max-w-[140px]">
+              <span className="text-[10px] pos-theme-text-muted text-slate-500 dark:text-gray-400 block truncate">
                 {state.config.standId || 'STAND'}
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5">
-            {/* Quick Live Cash Pill */}
-            <div className="px-2 py-1 rounded-xl bg-cyan-100/40 dark:bg-cyan-950/40 border border-cyan-300/40 dark:border-cyan-500/30 text-right">
-              <span className="text-[8px] uppercase font-bold text-slate-500 dark:text-gray-400 block -mb-0.5">En Caja</span>
-              <span className="text-[11px] font-black font-mono text-cyan-700 dark:text-cyan-300">
-                {formatCOP(financials.totalSales)}
-              </span>
-            </div>
-
+          <div className="flex items-center gap-1.5 shrink-0">
             {/* Sound Mute/Unmute Toggle Button */}
             <button
               type="button"
               onClick={toggleAudio}
-              className="p-1.5 rounded-xl text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 active:scale-95 transition-all cursor-pointer"
+              className="p-1.5 rounded-xl text-slate-600 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 active:scale-95 transition-all cursor-pointer"
               title={soundMuted ? 'Activar Sonidos' : 'Silenciar Sonidos'}
               aria-label={soundMuted ? 'Activar Sonidos' : 'Silenciar Sonidos'}
             >
-              {soundMuted ? <VolumeX className="w-3.5 h-3.5 text-rose-400" /> : <Volume2 className="w-3.5 h-3.5 text-cyan-400" />}
+              {soundMuted ? <VolumeX className="w-3.5 h-3.5 text-rose-500" /> : <Volume2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />}
             </button>
 
             {/* Botón Instalar App */}
@@ -1058,19 +1057,21 @@ export const POSApp: React.FC<POSAppProps> = ({ onBackToLanding, onOpenLicenseMo
 
               {/* Exit & Reset Session Section */}
               <div className="text-center pt-2 space-y-2.5">
-                <button
-                  type="button"
-                  onClick={onBackToLanding}
-                  className="w-full py-2.5 rounded-xl bg-slate-200/70 dark:bg-white/5 hover:bg-slate-300 dark:hover:bg-white/10 text-xs font-bold text-slate-700 dark:text-gray-300 transition-colors flex items-center justify-center gap-1.5"
-                >
-                  <ArrowLeft className="w-3.5 h-3.5" />
-                  <span>Salir al Portal Principal</span>
-                </button>
+                {!isPWA && (
+                  <button
+                    type="button"
+                    onClick={onBackToLanding}
+                    className="w-full py-2.5 rounded-xl bg-slate-200/70 dark:bg-white/5 hover:bg-slate-300 dark:hover:bg-white/10 text-xs font-bold text-slate-700 dark:text-gray-300 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    <span>Salir al Portal Principal</span>
+                  </button>
+                )}
 
                 <button
                   type="button"
                   onClick={() => setShowResetConfirm(true)}
-                  className="text-xs text-rose-500 dark:text-rose-400 hover:underline block mx-auto pt-1"
+                  className="text-xs text-rose-500 dark:text-rose-400 hover:underline block mx-auto pt-1 cursor-pointer"
                 >
                   Borrar datos y reiniciar stand
                 </button>
@@ -1117,7 +1118,7 @@ export const POSApp: React.FC<POSAppProps> = ({ onBackToLanding, onOpenLicenseMo
                     <button
                       type="button"
                       onClick={() => window.print()}
-                      className="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-black uppercase tracking-wider text-xs shadow-lg shadow-cyan-500/25 active:scale-95 flex items-center justify-center gap-2"
+                      className="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-black uppercase tracking-wider text-xs shadow-lg shadow-cyan-500/25 active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <Printer className="w-4 h-4" />
                       <span>Imprimir Acta Oficial / Guardar PDF</span>
@@ -1127,7 +1128,7 @@ export const POSApp: React.FC<POSAppProps> = ({ onBackToLanding, onOpenLicenseMo
                       <button
                         type="button"
                         onClick={handleDownloadTxt}
-                        className="w-full py-3.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-black font-black uppercase tracking-wider text-xs shadow-lg active:scale-95 flex items-center justify-center gap-2"
+                        className="w-full py-3.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-black font-black uppercase tracking-wider text-xs shadow-lg active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
                       >
                         <Download className="w-4 h-4" />
                         <span>Descargar Reporte (.TXT)</span>
@@ -1136,7 +1137,7 @@ export const POSApp: React.FC<POSAppProps> = ({ onBackToLanding, onOpenLicenseMo
                       <button
                         type="button"
                         onClick={() => setIsUpgradeOpen(true)}
-                        className="w-full py-2.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-600 dark:text-cyan-300 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors"
+                        className="w-full py-2.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-600 dark:text-cyan-300 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                       >
                         <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
                         <span>Desbloquear Acta en PDF y Firmas (Premium)</span>
@@ -1148,42 +1149,31 @@ export const POSApp: React.FC<POSAppProps> = ({ onBackToLanding, onOpenLicenseMo
             </div>
           )}
         </div>
-
-        {/* BOTTOM FOOTER STATUS PILL */}
-        <div className="p-2.5 border-t border-slate-200 dark:border-[#1f1f23] pos-theme-header bg-[#0c0c0e] flex items-center justify-between text-[11px] text-gray-400 px-4">
-          <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="font-medium text-slate-700 dark:text-gray-300">100% Offline y Guardado</span>
-          </div>
-          <span className="font-mono text-cyan-600 dark:text-cyan-400 font-bold">
-            Stand: {state.config.standId || '000'}
-          </span>
-        </div>
       </div>
 
       {/* Reset Confirmation Modal */}
       {showResetConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4 animate-in fade-in">
-          <div className="w-full max-w-xs rounded-3xl bg-[#0c0c0e] border border-rose-500/40 p-5 text-white shadow-2xl text-center space-y-3">
-            <div className="w-10 h-10 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 dark:bg-black/85 backdrop-blur-sm p-4 animate-in fade-in">
+          <div className="w-full max-w-xs rounded-3xl bg-white dark:bg-[#0c0c0e] border border-rose-300 dark:border-rose-500/40 p-5 text-slate-900 dark:text-white shadow-2xl text-center space-y-3">
+            <div className="w-10 h-10 rounded-2xl bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400 flex items-center justify-center mx-auto">
               <AlertTriangle className="w-5 h-5" />
             </div>
-            <h4 className="font-bold text-sm">¿Borrar todos los datos y reiniciar?</h4>
-            <p className="text-xs text-gray-400 leading-relaxed">
+            <h4 className="font-bold text-sm text-slate-900 dark:text-white">¿Borrar todos los datos y reiniciar?</h4>
+            <p className="text-xs text-slate-600 dark:text-gray-400 leading-relaxed">
               Esta acción es irreversible y dejará el stand en blanco para una nueva jornada.
             </p>
             <div className="flex gap-2 pt-2">
               <button
                 type="button"
                 onClick={() => setShowResetConfirm(false)}
-                className="flex-1 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold"
+                className="flex-1 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-white/10 dark:hover:bg-white/20 dark:text-white text-xs font-semibold cursor-pointer"
               >
                 Cancelar
               </button>
               <button
                 type="button"
                 onClick={handleResetSession}
-                className="flex-1 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold"
+                className="flex-1 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold cursor-pointer shadow-md shadow-rose-600/20"
               >
                 Sí, Reiniciar
               </button>
@@ -1194,25 +1184,25 @@ export const POSApp: React.FC<POSAppProps> = ({ onBackToLanding, onOpenLicenseMo
 
       {/* Clear Demo & Setup Real Stand Modal */}
       {showClearDemoModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4 animate-in fade-in">
-          <div className="w-full max-w-sm rounded-3xl bg-[#0c0c0e] border border-amber-500/50 p-5 text-white shadow-2xl space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 dark:bg-black/85 backdrop-blur-sm p-4 animate-in fade-in">
+          <div className="w-full max-w-sm rounded-3xl bg-white dark:bg-[#0c0c0e] border border-amber-300 dark:border-amber-500/50 p-5 text-slate-900 dark:text-white shadow-2xl space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-2xl bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400 flex items-center justify-center shrink-0">
                 <Sparkles className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="font-black text-sm">Configurar mi Stand Real</h4>
-                <p className="text-[11px] text-gray-400">Elimina datos de prueba y deja tu caja en ceros</p>
+                <h4 className="font-black text-sm text-slate-900 dark:text-white">Configurar mi Stand Real</h4>
+                <p className="text-[11px] text-slate-500 dark:text-gray-400">Elimina datos de prueba y deja tu caja en ceros</p>
               </div>
             </div>
 
-            <p className="text-xs text-amber-200/90 bg-amber-500/10 p-3 rounded-2xl border border-amber-500/20 leading-relaxed">
+            <p className="text-xs text-amber-800 dark:text-amber-200/90 bg-amber-50 dark:bg-amber-500/10 p-3 rounded-2xl border border-amber-200 dark:border-amber-500/20 leading-relaxed">
               Al confirmar, las ventas de prueba se borrarán y tu stand quedará listo para tu feria real.
             </p>
 
             <div className="space-y-3 text-left">
               <div>
-                <label className="text-[11px] font-bold text-gray-300 block mb-1">
+                <label className="text-[11px] font-bold text-slate-700 dark:text-gray-300 block mb-1">
                   Nombre de tu Stand / Negocio:
                 </label>
                 <input
@@ -1220,12 +1210,12 @@ export const POSApp: React.FC<POSAppProps> = ({ onBackToLanding, onOpenLicenseMo
                   value={setupStandName}
                   onChange={(e) => setSetupStandName(e.target.value)}
                   placeholder="Ej: Delicias Caseras, Arte & Diseño"
-                  className="w-full px-3 py-2.5 rounded-xl bg-black/60 border border-white/10 text-xs text-white focus:outline-none focus:border-amber-400"
+                  className="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-black/60 border border-slate-300 dark:border-white/10 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-gray-300 block mb-1">
+                <label className="text-[11px] font-bold text-slate-700 dark:text-gray-300 block mb-1">
                   Costo de Stand o Inversión Inicial (COP):
                 </label>
                 <input
@@ -1233,7 +1223,7 @@ export const POSApp: React.FC<POSAppProps> = ({ onBackToLanding, onOpenLicenseMo
                   value={setupInvestmentStr}
                   onChange={(e) => setSetupInvestmentStr(formatNumberMask(e.target.value))}
                   placeholder="Ej: 50.000"
-                  className="w-full px-3 py-2.5 rounded-xl bg-black/60 border border-white/10 text-xs font-mono text-amber-300 focus:outline-none focus:border-amber-400"
+                  className="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-black/60 border border-slate-300 dark:border-white/10 text-xs font-mono text-amber-700 dark:text-amber-300 focus:outline-none focus:border-amber-500"
                 />
               </div>
             </div>
@@ -1242,14 +1232,14 @@ export const POSApp: React.FC<POSAppProps> = ({ onBackToLanding, onOpenLicenseMo
               <button
                 type="button"
                 onClick={() => setShowClearDemoModal(false)}
-                className="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold"
+                className="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-white/10 dark:hover:bg-white/20 dark:text-white text-xs font-semibold cursor-pointer"
               >
                 Cancelar
               </button>
               <button
                 type="button"
                 onClick={handleClearDemoAndStartReal}
-                className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 text-black font-black text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20 active:scale-95 transition-all"
+                className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 text-black font-black text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20 active:scale-95 transition-all cursor-pointer"
               >
                 Iniciar Stand Real
               </button>

@@ -10,10 +10,43 @@ import { playSuccess } from './lib/audio';
 import { WifiOff } from 'lucide-react';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState<'landing' | 'pos' | 'activation'>('landing');
+  const [currentView, setCurrentView] = useState<'landing' | 'pos' | 'activation'>(() => {
+    if (typeof window === 'undefined') return 'landing';
+    const params = new URLSearchParams(window.location.search);
+    const isStandalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as unknown as { standalone?: boolean }).standalone === true;
+    const isPosParam = params.get('app') === 'pos' || params.get('view') === 'pos';
+    const isActivationParam = params.get('app') === 'activation';
+
+    if (isActivationParam) return 'activation';
+    if (isStandalone || isPosParam) {
+      return 'pos';
+    }
+    return 'landing';
+  });
+
   const [licenseModalOpen, setLicenseModalOpen] = useState(false);
   const [licenseModalPlan, setLicenseModalPlan] = useState<PlanType>('premium');
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  // Synchronize URL query parameter with current view so browser/PWA remembers and installs the exact app view
+  useEffect(() => {
+    try {
+      const url = new URL(window.location.href);
+      if (currentView === 'pos') {
+        url.searchParams.set('app', 'pos');
+      } else if (currentView === 'activation') {
+        url.searchParams.set('app', 'activation');
+      } else {
+        url.searchParams.delete('app');
+        url.searchParams.delete('view');
+      }
+      window.history.replaceState({}, document.title, url.toString());
+    } catch {
+      // ignore
+    }
+  }, [currentView]);
 
   // Synchronize dynamic PWA and favicon icons with the active plan
   useEffect(() => {
