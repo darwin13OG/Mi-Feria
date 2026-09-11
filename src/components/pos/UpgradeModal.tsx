@@ -56,47 +56,47 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-in fade-in">
-      <div className="w-full max-w-sm rounded-[28px] bg-[#0c0c0e] border border-cyan-500/50 p-6 text-white shadow-2xl relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 dark:bg-black/90 backdrop-blur-md p-4 animate-in fade-in">
+      <div className="w-full max-w-sm rounded-[28px] bg-white dark:bg-[#0c0c0e] border border-slate-200 dark:border-cyan-500/50 p-6 text-slate-900 dark:text-white shadow-2xl relative">
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-5 right-5 p-1.5 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors"
+          className="absolute top-5 right-5 p-1.5 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-slate-500 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
 
         <div className="text-center space-y-3 mb-5">
-          <div className="w-12 h-12 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center mx-auto">
+          <div className="w-12 h-12 rounded-2xl bg-cyan-100 text-cyan-700 dark:bg-cyan-500/20 dark:text-cyan-400 flex items-center justify-center mx-auto">
             <Sparkles className="w-6 h-6" />
           </div>
-          <h3 className="text-lg font-black uppercase tracking-tight text-white">
+          <h3 className="text-lg font-black uppercase tracking-tight text-slate-900 dark:text-white">
             Desbloquear Mi Feria Premium
           </h3>
-          <p className="text-xs text-gray-400 leading-relaxed">
+          <p className="text-xs text-slate-600 dark:text-gray-400 leading-relaxed">
             Esta funcionalidad es exclusiva de la versión Premium.
           </p>
         </div>
 
         {/* Features included */}
-        <div className="p-3.5 rounded-2xl bg-black/60 border border-white/10 space-y-2 mb-5 text-xs text-gray-300">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400 block mb-1">
+        <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-black/60 border border-slate-200 dark:border-white/10 space-y-2 mb-5 text-xs text-slate-700 dark:text-gray-300">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 block mb-1">
             Incluido en Versión Premium:
           </span>
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+            <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
             <span>Módulo de Gastos Extras e Imprevistos</span>
           </div>
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+            <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
             <span>Calculadora de Vuelto Inteligente con billetes</span>
           </div>
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+            <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
             <span>Acta Oficial de Cierre formal para imprimir en PDF</span>
           </div>
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+            <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
             <span>Registro de Integrantes del Equipo</span>
           </div>
         </div>
@@ -120,8 +120,8 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
         </div>
 
         {/* Option 2: Enter Upgrade Code */}
-        <form onSubmit={handleValidateCode} className="pt-3 border-t border-white/10 space-y-3">
-          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block text-center">
+        <form onSubmit={handleValidateCode} className="pt-3 border-t border-slate-200 dark:border-white/10 space-y-3">
+          <span className="text-[10px] font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider block text-center">
             ¿Ya compraste a Darwin en efectivo o tienes clave?
           </span>
 
@@ -129,13 +129,13 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
             type="text"
             value={upgradeCode}
             onChange={(e) => setUpgradeCode(e.target.value)}
-            placeholder="Ingresa tu código Premium"
-            className="w-full px-3 py-2.5 rounded-xl bg-black/70 border border-white/15 text-center text-xs font-mono font-bold text-cyan-300 uppercase focus:outline-none focus:border-cyan-400"
+            placeholder="Código numérico (6 dígitos)"
+            className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-black/60 border border-slate-300 dark:border-white/10 text-center font-mono font-bold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-gray-600 focus:outline-none focus:border-cyan-500"
           />
 
           {errorMsg && (
-            <div className="p-2 rounded-xl bg-rose-500/20 text-rose-300 text-[11px] flex items-center gap-1 justify-center">
-              <AlertCircle className="w-3 h-3 shrink-0" />
+            <div className="p-2 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-300 dark:border-rose-500/30 text-rose-700 dark:text-rose-300 text-[11px] flex items-center gap-1.5">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
               <span>{errorMsg}</span>
             </div>
           )}
@@ -143,10 +143,10 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
           <button
             type="submit"
             disabled={isActivating}
-            className="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5"
+            className="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer"
           >
-            <Key className="w-3.5 h-3.5 text-cyan-400" />
-            <span>Validar y Desbloquear Premium</span>
+            <Key className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
+            <span>Validar Clave</span>
           </button>
         </form>
       </div>
