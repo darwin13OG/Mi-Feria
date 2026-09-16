@@ -218,25 +218,49 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             />
           </div>
 
-          {/* Botón de Menú de 3 Barras (Restaurado en todos los dispositivos) */}
-          <button
-            type="button"
-            id="nav-toggle-btn"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2.5 rounded-xl text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 transition-all cursor-pointer touch-manipulation flex items-center gap-2"
-            aria-label="Abrir menú de navegación"
-          >
-            {mobileMenuOpen ? <X className="w-5 h-5 text-cyan-400" /> : <Menu className="w-5 h-5 text-gray-200" />}
-          </button>
+          {/* Acciones de Cabecera: Abrir POS y Menú */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              id="header-open-app-btn"
+              onClick={() => onOpenApp()}
+              className="px-3 py-2 rounded-xl bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500 hover:from-emerald-300 hover:to-cyan-400 active:scale-95 text-black font-black text-xs uppercase tracking-wider shadow-md shadow-emerald-500/20 flex items-center gap-1.5 cursor-pointer touch-manipulation transition-all"
+            >
+              <Zap className="w-3.5 h-3.5 fill-black" />
+              <span>Abrir App POS</span>
+            </button>
+
+            {/* Botón de Menú de 3 Barras */}
+            <button
+              type="button"
+              id="nav-toggle-btn"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2.5 rounded-xl text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 transition-all cursor-pointer touch-manipulation flex items-center gap-2"
+              aria-label="Abrir menú de navegación"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5 text-cyan-400" /> : <Menu className="w-5 h-5 text-gray-200" />}
+            </button>
+          </div>
         </div>
 
         {/* Slide-Down Quick Menu con transición suave y fluida */}
         <div
           className={`overflow-hidden transition-all duration-400 ease-in-out border-b border-[#1f1f23] bg-[#0c0c10]/98 backdrop-blur-2xl shadow-2xl ${
-            mobileMenuOpen ? 'max-h-[420px] opacity-100 py-3' : 'max-h-0 opacity-0 py-0 border-transparent pointer-events-none'
+            mobileMenuOpen ? 'max-h-[460px] opacity-100 py-3' : 'max-h-0 opacity-0 py-0 border-transparent pointer-events-none'
           }`}
         >
           <div className="max-w-6xl mx-auto px-4 space-y-1.5">
+            <button
+              type="button"
+              onClick={() => handleMobileNav(() => onOpenApp())}
+              className="w-full text-left p-3 rounded-xl bg-gradient-to-r from-emerald-500/25 to-teal-500/25 hover:bg-emerald-500/35 active:bg-emerald-500/40 border border-emerald-500/40 text-xs font-black text-emerald-300 flex items-center justify-between transition-colors cursor-pointer touch-manipulation shadow-md"
+            >
+              <div className="flex items-center gap-3">
+                <Zap className="w-4 h-4 text-emerald-400 fill-current" />
+                <span>🚀 Abrir App de Caja (POS)</span>
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-emerald-400" />
+            </button>
             <button
               type="button"
               onClick={() => handleMobileNav(() => scrollToSection('precios'))}
@@ -309,16 +333,34 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             Control de caja e inventario 100% offline para tu stand. Registra ventas al instante y genera el balance final para tu proyecto.
           </p>
 
-          <div className="flex items-center justify-center max-w-md mx-auto mb-10">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 max-w-lg mx-auto mb-6">
+            <button
+              type="button"
+              id="hero-open-app-btn"
+              onClick={() => onOpenApp()}
+              className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500 hover:from-emerald-300 hover:to-cyan-400 text-black font-black text-xs tracking-wider uppercase transition-all shadow-xl shadow-emerald-500/25 active:scale-95 flex items-center justify-center gap-2 cursor-pointer touch-manipulation"
+            >
+              <Zap className="w-4 h-4 text-black fill-current" />
+              <span>🚀 Abrir App de Caja (POS)</span>
+            </button>
+
             <button
               type="button"
               id="hero-see-pricing-btn"
               onClick={() => scrollToSection('precios')}
-              className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-600 hover:from-cyan-300 hover:to-blue-500 text-black font-extrabold text-xs tracking-wider uppercase transition-all shadow-xl shadow-cyan-500/25 active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-white/10 hover:bg-white/15 active:scale-95 text-white font-bold text-xs tracking-wider uppercase border border-white/15 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>Ver Licencias y Precios</span>
-              <ArrowRight className="w-4 h-4" />
+              <span>Ver Licencias ($10k / $18k)</span>
+              <ArrowRight className="w-4 h-4 text-gray-400" />
             </button>
+          </div>
+
+          {/* Quick Notice for Mobile PWA Installation */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/40 border border-white/10 text-[11px] text-gray-300 mb-10">
+            <Smartphone className="w-3.5 h-3.5 text-cyan-400" />
+            <span>
+              <strong>¿Instalar en celular?</strong> Abre la App de Caja y toca <strong>«Instalar»</strong> en la barra superior.
+            </span>
           </div>
 
           {/* 3 Insignias de Confianza */}

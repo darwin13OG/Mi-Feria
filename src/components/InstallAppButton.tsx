@@ -21,6 +21,16 @@ export const InstallAppButton: React.FC<InstallAppButtonProps> = ({
   }
 
   const handleClick = async () => {
+    try {
+      // Ensure URL is explicitly /?app=pos so any bookmark or home screen shortcut targets the POS
+      const url = new URL(window.location.href);
+      url.searchParams.set('app', 'pos');
+      window.history.replaceState({}, document.title, url.toString());
+      localStorage.setItem('miferia_active_view', 'pos');
+    } catch {
+      // ignore
+    }
+
     if (isInstallable) {
       setIsInstalling(true);
       try {
@@ -142,6 +152,13 @@ export const InstallAppButton: React.FC<InstallAppButtonProps> = ({
             </div>
 
             {/* Step-by-step Guide */}
+            <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[11px] leading-relaxed flex items-center gap-2">
+              <Check className="w-4 h-4 shrink-0 text-emerald-400" />
+              <span>
+                <strong>Solo la App de Caja:</strong> Se instalará directamente el sistema POS en tu pantalla de inicio, no la página web de ventas.
+              </span>
+            </div>
+
             {isIOS ? (
               <div className="space-y-3 text-xs text-gray-300">
                 <p className="text-gray-200 leading-relaxed">

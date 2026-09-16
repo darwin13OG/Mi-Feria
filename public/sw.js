@@ -1,6 +1,7 @@
-const CACHE_NAME = 'miferia-cache-v2';
+const CACHE_NAME = 'miferia-cache-v3';
 const ASSETS_TO_CACHE = [
   '/',
+  '/?app=pos',
   '/index.html',
   '/manifest.json',
   '/icon.svg',
@@ -52,7 +53,7 @@ self.addEventListener('fetch', (event) => {
       }
       return fetch(event.request).catch(() => {
         if (event.request.mode === 'navigate') {
-          return caches.match('/index.html') || caches.match('/');
+          return caches.match(event.request) || caches.match('/?app=pos') || caches.match('/index.html') || caches.match('/');
         }
       });
     })

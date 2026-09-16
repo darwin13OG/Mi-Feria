@@ -15,7 +15,11 @@ export default function App() {
     const params = new URLSearchParams(window.location.search);
     const isStandalone =
       window.matchMedia('(display-mode: standalone)').matches ||
-      (window.navigator as unknown as { standalone?: boolean }).standalone === true;
+      window.matchMedia('(display-mode: fullscreen)').matches ||
+      window.matchMedia('(display-mode: minimal-ui)').matches ||
+      (window.navigator as unknown as { standalone?: boolean }).standalone === true ||
+      document.referrer.includes('android-app://');
+
     const isPosParam = params.get('app') === 'pos' || params.get('view') === 'pos';
     const isActivationParam = params.get('app') === 'activation';
 
@@ -23,6 +27,22 @@ export default function App() {
     if (isStandalone || isPosParam) {
       return 'pos';
     }
+
+    // Check if the user previously had an active session or opened the POS in this browser
+    try {
+      const stored = loadStoredState();
+      const hasActiveSession =
+        stored.config.isConfigured ||
+        Boolean(stored.config.licenseKey) ||
+        stored.sales.length > 0;
+      const lastView = localStorage.getItem('miferia_active_view');
+      if (lastView === 'pos' || hasActiveSession) {
+        return 'pos';
+      }
+    } catch {
+      // ignore
+    }
+
     return 'landing';
   });
 
@@ -30,9 +50,10 @@ export default function App() {
   const [licenseModalPlan, setLicenseModalPlan] = useState<PlanType>('premium');
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
-  // Synchronize URL query parameter with current view so browser/PWA remembers and installs the exact app view
+  // Synchronize URL query parameter and local storage so browser/PWA remembers and installs the exact app view
   useEffect(() => {
     try {
+      localStorage.setItem('miferia_active_view', currentView);
       const url = new URL(window.location.href);
       if (currentView === 'pos') {
         url.searchParams.set('app', 'pos');
@@ -136,14 +157,7 @@ export default function App() {
       stored.config.plan = preferredPlan;
       saveStoredState(stored);
     }
-
-    // If already activated or configured, go straight to POS
-    if (stored.config.licenseKey || stored.config.isConfigured) {
-      setCurrentView('pos');
-    } else {
-      // First time activation screen
-      setCurrentView('activation');
-    }
+    setCurrentView('pos');
   };
 
   // Explicitly open the Activation Screen to input code

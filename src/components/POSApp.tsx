@@ -72,7 +72,10 @@ export const POSApp: React.FC<POSAppProps> = ({ onBackToLanding, onOpenLicenseMo
 
   const isPWA = typeof window !== 'undefined' && (
     window.matchMedia('(display-mode: standalone)').matches ||
+    window.matchMedia('(display-mode: fullscreen)').matches ||
+    window.matchMedia('(display-mode: minimal-ui)').matches ||
     (window.navigator as unknown as { standalone?: boolean }).standalone === true ||
+    document.referrer.includes('android-app://') ||
     new URLSearchParams(window.location.search).get('app') === 'pos' ||
     new URLSearchParams(window.location.search).get('view') === 'pos'
   );
